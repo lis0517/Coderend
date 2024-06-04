@@ -1,6 +1,7 @@
 package com.sparta.fifteen.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -34,6 +35,9 @@ public class User {
     private String username; // 이름
     private String oneLine; // 한 줄 소개
     private EnumType statusCode; // 상태 코드
+
+    @Email
+    private String email;
 
     @Column(length = 36, unique = true)
     private String refreshToken;
