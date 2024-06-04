@@ -66,7 +66,7 @@ public class User {
         this.username = requestDto.getUsername();
         this.password = requestDto.getPassword();
         this.name = requestDto.getName();
-        this.oneLine = requestDto.getOneline();
+        this.oneLine = requestDto.getOneLine();
         this.refreshToken = requestDto.getRefreshToken();
         this.email = requestDto.getEmail();
         this.statusCode = getStatusCode();
