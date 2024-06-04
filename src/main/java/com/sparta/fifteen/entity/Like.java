@@ -1,8 +1,12 @@
 package com.sparta.fifteen.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Like extends Timestamped{
 
     @Id

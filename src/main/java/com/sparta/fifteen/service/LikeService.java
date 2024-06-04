@@ -12,18 +12,22 @@ import java.util.Optional;
 public class LikeService {
 
     private final LikeRepository likeRepository;
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
 
     public LikeService(LikeRepository likeRepository, UserRepository userRepository) {
-        this.userRepository = userRepository;
+        //this.userRepository = userRepository;
         this.likeRepository = likeRepository;
     }
 
     public void likeOrUnlike(Long userId, Long contentId, ContentTypeEnum contentType) {
 
-        //userId 존재 여부 체크
         //userId별 contetType별 ContentId 가 존재하는지 여부에 대한 check가 필요
         //Repositrory comment newsfeed 둘다 필요
+
+        //자기가 만든거 일 때는 종료/예외처리
+        if(checkOwnContent(userId, contentId, contentType)) {
+            return;
+        }
 
         Optional<Like> existingLike = likeRepository.findByUserIdAndContentIdAndContentType(userId, contentId, contentType);
 
@@ -36,4 +40,11 @@ public class LikeService {
             likeRepository.save(like);
         }
     }
+
+    private boolean checkOwnContent(Long userId, Long contentId, ContentTypeEnum contentType) {
+        //.내부 정보 확인해서 본인이 만든 게시물인지 확인
+
+        return true;
+    }
+
 }
