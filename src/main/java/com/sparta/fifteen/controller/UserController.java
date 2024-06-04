@@ -1,5 +1,6 @@
 package com.sparta.fifteen.controller;
 
+import com.sparta.fifteen.dto.UserLoginRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.service.UserService;
@@ -31,6 +32,16 @@ public class UserController {
             return ResponseEntity.badRequest().body("이미 존재하는 User ID 입니다. 회원가입에 실패하셨습니다.");
         } catch (InputMismatchException e) {
             return ResponseEntity.badRequest().body("잘못된 비밀번호 형식입니다. 회원가입에 실패하셨습니다.");
+        }
+    }
+
+    @PostMapping("/login")
+    private ResponseEntity<?> userLogin(@RequestBody UserLoginRequestDto requestDto) {
+        try {
+            String token = userService.loginUser(requestDto.getUsername(), requestDto.getPassword());
+            return ResponseEntity.ok().body(token);
+        } catch (InputMismatchException e) {
+            return ResponseEntity.badRequest().body("아이디 또는 비밀번호를 확인해주세요. 로그인에 실패하셨습니다.");
         }
     }
 }

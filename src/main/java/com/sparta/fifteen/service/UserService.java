@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.sql.Timestamp;
 import java.util.InputMismatchException;
+import java.util.Optional;
 
 @Service
 @Validated
@@ -36,9 +37,27 @@ public class UserService {
         user.setCreatedOn(new Timestamp(System.currentTimeMillis()));
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         // 유저 상태 적기
-        UserStatusEnum userStatusEnum =UserStatusEnum.NORMAL;
-        user.setStatusCode(userStatusEnum.name());
+        user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus()));
         userRepository.save(user);
         return new UserRegisterResponseDto(user);
+    }
+
+    public String loginUser(String loginUsername, String loginPassword) {
+        // DB에서 username 먼저 조회
+        Optional<User> optionalUser = userRepository.findByUsername(loginUsername);
+
+        if(optionalUser.isPresent()) {
+            User registeredUser = optionalUser.get();
+
+            // User 상태가 WITHDRAW면 예외 처리
+            if(registeredUser.getStatusCode().equals(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()))) {
+                throw new IllegalArgumentException("탈퇴한 계정");
+            }
+            // 토큰 생성 위치
+            if(passwordEncoder.matches(loginPassword, registeredUser.getPassword())) {
+                return null;
+            }
+        }
+        throw new InputMismatchException("아이디, 패스워드 불일치");
     }
 }
