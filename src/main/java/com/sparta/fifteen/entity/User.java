@@ -1,5 +1,7 @@
 package com.sparta.fifteen.entity;
 
+import com.sparta.fifteen.dto.UserRegisterRequestDto;
+import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -26,15 +28,15 @@ public class User {
     @Size(min = 10, max = 20)
     @Pattern(regexp = "^[a-zA-Z0-9]*$")
     @Column(nullable = false, unique = true)
-    private String userId; // 로그인 ID
+    private String username; // 로그인 ID
 
     @NotNull
     @Column(nullable = false, length = 100) // 단방향 인코딩된 패스워드 길이
     private String password; // 로그인 Password
 
-    private String username; // 이름
+    private String name; // 이름
     private String oneLine; // 한 줄 소개
-    private EnumType statusCode; // 상태 코드
+    private String statusCode; // 상태 코드
 
     @Email
     private String email;
@@ -50,5 +52,27 @@ public class User {
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp modifiedOn;
+
+//    @OneToMany(mappedBy = "user")
+//    private List<NewsFeed> newsFeedList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user")
+//    private List<Comment> commentList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user")
+//    private List<Likes> likesList = new ArrayList<>();
+
+    public User(UserRegisterRequestDto requestDto) {
+        this.username = requestDto.getUsername();
+        this.password = requestDto.getPassword();
+        this.name = requestDto.getName();
+        this.oneLine = requestDto.getOneline();
+        this.refreshToken = requestDto.getRefreshToken();
+        this.email = requestDto.getEmail();
+        this.statusCode = getStatusCode();
+        this.statusChangedTime = getStatusChangedTime();
+        this.createdOn = getCreatedOn();
+        this.modifiedOn = getModifiedOn();
+    }
 
 }
