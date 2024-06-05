@@ -1,51 +1,61 @@
 package com.sparta.fifteen.service;
 
-import com.sparta.fifteen.entity.ContentTypeEnum;
-import com.sparta.fifteen.entity.LikeComment;
-import com.sparta.fifteen.entity.LikeNewsFeed;
-import com.sparta.fifteen.repository.LikeCommentRepository;
-import com.sparta.fifteen.repository.LikeNewsFeedRepository;
-import com.sparta.fifteen.repository.UserRepository;
+import com.sparta.fifteen.entity.*;
+import com.sparta.fifteen.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class LikeService {
 
-    private final LikeCommentRepository likeRepository;
+    private final LikeCommentRepository likeCommentRepository;
     private final LikeNewsFeedRepository likeNewsFeedRepository;
+    private final CommentRepository commentRepository;
+    private final NewsFeedRepository newsFeedRepository;
 
-    public LikeService(LikeCommentRepository likeRepository, LikeNewsFeedRepository likeNewsFeedRepository) {
-        this.likeRepository = likeRepository;
+
+    public LikeService(LikeCommentRepository likeCommentRepository, LikeNewsFeedRepository likeNewsFeedRepository, CommentRepository commentRepository, NewsFeedRepository newsFeedRepository) {
+        this.likeCommentRepository = likeCommentRepository;
         this.likeNewsFeedRepository = likeNewsFeedRepository;
+        this.commentRepository = commentRepository;
+        this.newsFeedRepository = newsFeedRepository;
     }
 
-    public void likeOrUnlike(Long userId, Long contentId, ContentTypeEnum contentType) {
+    public void likeOrUnlike(User user, Long contentId, ContentTypeEnum contentType) {
 
+        Long userId = user.getId();
 
+        if(checkOwnContent(userId, contentId, contentType)) {
+            return;
+        }
         //자기가 만든거 일 때는 종료/예외처리
         if(contentType == ContentTypeEnum.NEWSFEED_TYPE) {
-            if(checkOwnContent(userId, contentId, contentType)) {
-                return;
+
+            Optional<NewsFeed> newsFeed = newsFeedRepository.findById(contentId);
+            if(newsFeed.isEmpty()) {
+                return; // 예외 처리로 수정
             }
             Optional<LikeNewsFeed> existingLike = likeNewsFeedRepository.findByUserIdAndNewsfeedId(userId, contentId);
             if (existingLike.isPresent()) {
                 likeNewsFeedRepository.delete(existingLike.get());
             } else {
-                LikeNewsFeed like = new LikeNewsFeed( userId,  contentId);
+                LikeNewsFeed like = new LikeNewsFeed( user,  newsFeed.get());
                 likeNewsFeedRepository.save(like);
             }
         }else{
-            if(checkOwnContent(userId, contentId, contentType)) {
-                return;
+            Optional<Comment> comment = commentRepository.findById(contentId);
+            if(comment.isEmpty()) {
+                return; // 예외 처리로 수정
             }
-            Optional<LikeComment> existingLike = likeRepository.findByUserIdAndCommentId(userId, contentId);
+
+            Optional<LikeComment> existingLike = likeCommentRepository.findByUserIdAndCommentId(userId, contentId);
             if (existingLike.isPresent()) {
-                likeRepository.delete(existingLike.get());
+                likeCommentRepository.delete(existingLike.get());
             } else {
-                LikeComment like = new LikeComment( userId,  contentId);
-                likeRepository.save(like);
+                LikeComment like = new LikeComment( user,  comment.get());
+                likeCommentRepository.save(like);
             }
         }
 
@@ -55,7 +65,18 @@ public class LikeService {
 
     private boolean checkOwnContent(Long userId, Long contentId, ContentTypeEnum contentType) {
         //.내부 정보 확인해서 본인이 만든 게시물인지 확인
-        return true;
+        if(contentType == ContentTypeEnum.NEWSFEED_TYPE) {
+            Optional<NewsFeed> newsFeed = newsFeedRepository.findById(contentId);
+            if (newsFeed.get().getAuthorId()==userId) {
+                return true;
+            }
+        }else{
+            Optional<Comment> comment = commentRepository.findById(contentId);
+            if (Objects.equals(comment.get().getUser().getId(), userId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

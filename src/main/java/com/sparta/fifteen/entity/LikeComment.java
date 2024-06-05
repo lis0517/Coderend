@@ -1,12 +1,15 @@
 package com.sparta.fifteen.entity;
 
+import com.sparta.fifteen.repository.CommentRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class LikeComment extends Timestamped{
 
     @Id
@@ -17,15 +20,14 @@ public class LikeComment extends Timestamped{
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Long userId;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
-    private Long conmmentId;
+    private Comment comment;
 
-
-    public LikeComment(Long userId, Long conmmentId) {
-        this.userId = userId;
-        this.conmmentId = conmmentId;
+    public LikeComment(User user, Comment comment) {
+        this.user = user;
+        this.comment = comment;
     }
 }

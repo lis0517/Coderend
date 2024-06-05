@@ -1,10 +1,12 @@
 package com.sparta.fifteen.controller;
 
-import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.entity.ContentTypeEnum;
+import com.sparta.fifteen.entity.User;
+import com.sparta.fifteen.security.UserDetailsImpl;
 import com.sparta.fifteen.service.LikeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +22,12 @@ public class LikeController {
     }
 
     @PostMapping("/newsfeed/{newsfeedId}/likeToggle")
-    public ResponseEntity<String> toggleLikeNewsFeed(@RequestHeader("Authorization") String token,
+    public ResponseEntity<String> toggleLikeNewsFeed(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                              @PathVariable Long newsfeedId) {
 
         try {
-            Long userId = getUserIdFromToken(token);
-            likeService.likeOrUnlike(userId, newsfeedId, ContentTypeEnum.NEWSFEED_TYPE);
+            User user = userDetails.getUser();
+            likeService.likeOrUnlike(user, newsfeedId, ContentTypeEnum.NEWSFEED_TYPE);
             return new ResponseEntity<>("좋아요 토글 성공", HttpStatus.OK);
 
         } catch (Exception e) {
@@ -36,12 +38,12 @@ public class LikeController {
 
 
     @PostMapping("newsfeed/{newsfeedId}/comments/{commentId}/likeToggle")
-    public ResponseEntity<String> toggleLikeComment(@RequestHeader("Authorization") String token,
+    public ResponseEntity<String> toggleLikeComment( @AuthenticationPrincipal UserDetailsImpl userDetails,
                                              @PathVariable Long commentId) {
 
         try {
-            Long userId = getUserIdFromToken(token);
-            likeService.likeOrUnlike(userId, commentId, ContentTypeEnum.COMMENT_TYPE);
+            User user = userDetails.getUser();
+            likeService.likeOrUnlike(user, commentId, ContentTypeEnum.COMMENT_TYPE);
             return new ResponseEntity<>("좋아요 토글 성공", HttpStatus.OK);
 
         } catch (Exception e) {
@@ -49,9 +51,5 @@ public class LikeController {
         }
     }
 
-    private Long getUserIdFromToken(String token) {
-
-        return 1L;
-    }
 
 }
