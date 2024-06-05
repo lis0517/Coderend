@@ -26,6 +26,6 @@ public class CommentResponseDto {
     }
 
     public static CommentResponseDto toDto(Comment comment) {
-        return new CommentResponseDto(comment.getId(), comment.getComment(), comment.getLike(), comment.getUser().getId(), comment.getNewsfeed().getId(), comment.getCreatedAt(), comment.getModifiedAt());
+        return new CommentResponseDto(comment.getId(), comment.getComment(), comment.getLikes(), comment.getUser().getId(), comment.getNewsfeed().getId(), comment.getCreatedAt(), comment.getModifiedAt());
     }
 }

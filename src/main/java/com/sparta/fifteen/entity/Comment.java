@@ -14,15 +14,14 @@ public class Comment extends Timestamped{
     private Long id;
     private String comment;
     @Column(columnDefinition = "bigint default 0")
-    private Long like;
+    private Long likes;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "users_id", nullable = false)
     private User user;
 
-    //뉴스피드 entity 생기면 뉴스피드 id 가져와야 함!
     @ManyToOne
-    @JoinColumn(name = "newsfeed_id", nullable = false)
+    @JoinColumn(name = "news_feed_id", nullable = false)
     private NewsFeed newsfeed;
 
     public Comment(String comment, User user, NewsFeed newsfeed) {
