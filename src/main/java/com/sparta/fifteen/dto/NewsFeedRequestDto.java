@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewsFeedRequestDto {
-    private int id;
-    private int authorId;
+    private long id;
+    private long authorId;
     @NotBlank(message ="내용을 입력해주세요.")
     private String content;
 }

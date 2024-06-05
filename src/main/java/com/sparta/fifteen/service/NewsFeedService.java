@@ -24,7 +24,7 @@ public class NewsFeedService {
         return newsFeedResponseDto;
     }
 
-    public NewsFeedResponseDto getNewsFeed(int newsFeedID) {
+    public NewsFeedResponseDto getNewsFeed(long newsFeedID) {
         NewsFeed newsFeed=newsFeedRepository.findById(newsFeedID).get();
         NewsFeedResponseDto newsFeedResponseDto=new NewsFeedResponseDto(newsFeed);
         return newsFeedResponseDto;
@@ -34,14 +34,14 @@ public class NewsFeedService {
         return newsFeedRepository.findAllByOrderByCreatedAtDesc().stream().map(NewsFeedResponseDto::new).toList();
     }
 
-    public NewsFeedResponseDto updateNewsFeed(int newsFeedID, NewsFeedRequestDto newsFeedRequestDto) {
+    public NewsFeedResponseDto updateNewsFeed(long newsFeedID, NewsFeedRequestDto newsFeedRequestDto) {
         NewsFeed newsFeed=newsFeedRepository.findById(newsFeedID).get();
         newsFeed.setContent(newsFeedRequestDto.getContent());
         newsFeedRepository.save(newsFeed);
         return new NewsFeedResponseDto(newsFeed);
     }
 
-    public int deleteNewsFeed(int newsFeedID) {
+    public long deleteNewsFeed(long newsFeedID) {
         NewsFeed newsFeed=newsFeedRepository.findById(newsFeedID).get();
         newsFeedRepository.delete(newsFeed);
         return newsFeedID;
