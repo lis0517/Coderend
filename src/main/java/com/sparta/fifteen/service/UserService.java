@@ -1,7 +1,8 @@
 package com.sparta.fifteen.service;
 
+import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.dto.UserLoginRequestDto;
-import com.sparta.fifteen.entity.UserRefreshToken;
+import com.sparta.fifteen.entity.RefreshToken;
 import com.sparta.fifteen.entity.UserStatusEnum;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
@@ -59,10 +60,11 @@ public class UserService {
             if(passwordEncoder.matches(requestDto.getPassword(), registeredUser.getPassword())) {
                 String accessToken = JwtTokenProvider.generateAccessToken(requestDto.getUsername());
                 String refreshToken = JwtTokenProvider.generateRefreshToken();
+                Long expirationTime = JwtConfig.staticRefreshTokenExpiration;
 
-                UserRefreshToken userRefreshToken = registeredUser.getUserRefreshToken();
+                RefreshToken userRefreshToken = registeredUser.getUserRefreshToken();
                 if(userRefreshToken == null) {
-                    userRefreshToken = new UserRefreshToken(refreshToken, registeredUser);
+                    userRefreshToken = RefreshToken.from(registeredUser.getUsername(), refreshToken, expirationTime);
                     registeredUser.setUserRefreshToken(userRefreshToken);
                 } else {
                     userRefreshToken.updateRefreshToken(refreshToken);

@@ -42,7 +42,7 @@ public class User {
     private String email;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserRefreshToken userRefreshToken;
+    private RefreshToken userRefreshToken;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp statusChangedTime;
@@ -74,7 +74,7 @@ public class User {
         this.modifiedOn = getModifiedOn();
     }
 
-    public void setUserRefreshToken(UserRefreshToken userRefreshToken) {
+    public void setUserRefreshToken(RefreshToken userRefreshToken) {
         this.userRefreshToken = userRefreshToken;
         userRefreshToken.setUser(this);
     }
