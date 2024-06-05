@@ -79,7 +79,7 @@ public class User {
         this.name = profileRequestDto.getName();
         this.password = profileRequestDto.getNewPassword();
         this.oneLine = profileRequestDto.getOneline();
-        this.email = profileRequestDto.getEmail();
+
         this.modifiedOn = getModifiedOn();
     }
 }
