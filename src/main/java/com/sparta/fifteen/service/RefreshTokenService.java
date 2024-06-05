@@ -6,6 +6,7 @@ import com.sparta.fifteen.error.TokenNotFoundException;
 import com.sparta.fifteen.repository.RefreshTokenRepository;
 import com.sparta.fifteen.util.JwtTokenProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RefreshTokenService {
@@ -24,9 +25,12 @@ public class RefreshTokenService {
         return refreshTokenRepository.findById(username).orElseThrow(() ->
                 new TokenNotFoundException(ExceptionMessage.TOKEN_NOT_FOUND));
     }
-
+    @Transactional
     public void deleteRefreshTokenById(String username){
-        refreshTokenRepository.deleteById(username);
+        RefreshToken refreshToken = findRefreshTokenById(username);
+        if (refreshToken != null) {
+            refreshTokenRepository.delete(refreshToken);
+        }
     }
 
 }

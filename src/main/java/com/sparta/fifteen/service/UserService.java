@@ -7,6 +7,7 @@ import com.sparta.fifteen.entity.UserStatusEnum;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.entity.User;
+import com.sparta.fifteen.repository.RefreshTokenRepository;
 import com.sparta.fifteen.repository.UserRepository;
 import com.sparta.fifteen.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,10 +24,12 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public UserRegisterResponseDto registerUser(UserRegisterRequestDto requestDto) {
@@ -74,10 +77,45 @@ public class UserService {
                 // Header에 accessToken 추가
                 response.setHeader("Authorization", "Bearer " + accessToken);
 
-                //
                 return "성공";
             }
         }
         throw new InputMismatchException("아이디, 패스워드 불일치");
+    }
+
+    public void logoutUser(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            System.out.println("User found: " + user.getUsername());
+
+            // RefreshToken 확인
+            RefreshToken userRefreshToken = user.getUserRefreshToken();
+            if (userRefreshToken != null) {
+                System.out.println("RefreshToken found: " + userRefreshToken.getId());
+
+                // 리프레시 토큰 찾기
+                RefreshToken refreshToken = refreshTokenService.findRefreshTokenById(userRefreshToken.getId());
+                if (refreshToken != null) {
+                    System.out.println("RefreshToken in DB found: " + refreshToken.getId());
+
+                    // User의 refreshToken 참조를 null로 설정
+                    user.setUserRefreshToken(null);
+                    userRepository.save(user); // 변경사항 저장
+                    System.out.println("User-RefreshToken association cleared");
+
+                    // RefreshToken 삭제
+                    refreshTokenService.deleteRefreshTokenById(refreshToken.getId());
+                    System.out.println("RefreshToken deleted: " + refreshToken.getId());
+                } else {
+                    System.out.println("RefreshToken not found in DB");
+                }
+            } else {
+                // 리프레시 토큰이 없는 경우 처리
+                System.out.println("User has no RefreshToken");
+            }
+        } else {
+            System.out.println("User not found");
+        }
     }
 }
