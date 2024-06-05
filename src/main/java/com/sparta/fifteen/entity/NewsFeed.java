@@ -13,16 +13,16 @@ import lombok.Setter;
 public class NewsFeed extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Column(nullable = false)
-    private int authorId;
+    private long authorId;
     @Column(nullable = false)
     private String content;
     public NewsFeed(NewsFeedRequestDto newsFeedRequestDto){
         this.authorId = newsFeedRequestDto.getAuthorId();
         this.content = newsFeedRequestDto.getContent();
     }
-    public NewsFeed(int authorId, String content) {
+    public NewsFeed(long authorId, String content) {
         this.authorId = authorId;
         this.content = content;
     }
