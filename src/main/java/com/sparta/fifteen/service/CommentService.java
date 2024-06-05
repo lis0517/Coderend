@@ -8,6 +8,9 @@ import com.sparta.fifteen.entity.User;
 import com.sparta.fifteen.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
@@ -22,5 +25,16 @@ public class CommentService {
         commentRepository.save(comment);
 
         return CommentResponseDto.toDto(comment);
+    }
+
+    public List<CommentResponseDto> getComments(NewsFeed newsFeed) {
+        List<Comment> commentList = commentRepository.findAllByNewsfeedId(newsFeed.getId());
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+
+        for (Comment comment : commentList) {
+            commentResponseDtoList.add(CommentResponseDto.toDto(comment));
+        }
+
+        return commentResponseDtoList;
     }
 }
