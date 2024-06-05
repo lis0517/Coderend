@@ -31,4 +31,8 @@ public class ProfileRequestDto {
     public boolean isNewPasswordMatch() {
         return this.checkNewPassword.equals(this.newPassword);
     }
+
+    public boolean isPasswordMatching() {
+        return this.newPassword.equals(this.currentPassword);
+    }
 }

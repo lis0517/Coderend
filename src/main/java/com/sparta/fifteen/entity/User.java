@@ -75,25 +75,11 @@ public class User {
         this.modifiedOn = getModifiedOn();
     }
 
-
     public void updateProfile(ProfileRequestDto profileRequestDto) {
-
         this.name = profileRequestDto.getName();
         this.password = profileRequestDto.getNewPassword();
         this.oneLine = profileRequestDto.getOneline();
         this.email = profileRequestDto.getEmail();
         this.modifiedOn = getModifiedOn();
-
-
-    public void setUserRefreshToken(RefreshToken userRefreshToken) {
-        this.userRefreshToken = userRefreshToken;
-        if (userRefreshToken != null) {
-            userRefreshToken.setUser(this);
-        }
-    }
-
-    public RefreshToken getUserRefreshToken() {
-        return userRefreshToken;
-
     }
 }
