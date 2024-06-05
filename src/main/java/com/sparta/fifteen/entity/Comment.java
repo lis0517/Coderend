@@ -1,5 +1,6 @@
 package com.sparta.fifteen.entity;
 
+import com.sparta.fifteen.dto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,5 +29,9 @@ public class Comment extends Timestamped{
         this.comment = comment;
         this.user = user;
         this.newsfeed = newsfeed;
+    }
+
+    public void update(CommentRequestDto commentRequestDto) {
+        this.comment = commentRequestDto.getComment();
     }
 }

@@ -7,9 +7,11 @@ import com.sparta.fifteen.entity.NewsFeed;
 import com.sparta.fifteen.entity.User;
 import com.sparta.fifteen.repository.CommentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CommentService {
@@ -36,5 +38,32 @@ public class CommentService {
         }
 
         return commentResponseDtoList;
+    }
+
+    @Transactional
+    public CommentResponseDto updateComment(User user, Long commentId, CommentRequestDto commentRequestDto) {
+        Comment newComment = checkUser(commentId, user);
+
+        newComment.update(commentRequestDto);
+
+        return CommentResponseDto.toDto(newComment);
+    }
+
+    public void deleteComment(User user, Long commentId) {
+        Comment comment = checkUser(commentId, user);
+
+        commentRepository.delete(comment);
+    }
+
+    private Comment findCommentById(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("선택한 댓글이 존재하지 않습니다."));
+    }
+
+    private Comment checkUser(Long id, User user) {
+        Comment comment = findCommentById(id);
+        if (!Objects.equals(comment.getUser().getId(), user.getId())) {
+            throw new IllegalArgumentException("댓글의 작성자만 수행할 수 있습니다.");
+        }
+        return comment;
     }
 }
