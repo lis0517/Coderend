@@ -18,13 +18,7 @@ public class ProfileService {
         this.userRepository = userRepository;
     }
 
-    public void updateProfile(Long userId, ProfileRequestDto profileRequestDto) {
-
-        User user = userRepository.findByUserId(userId);
-
-        if (user == null) {
-            return;
-        }
+    public void updateProfile(User user, ProfileRequestDto profileRequestDto) {
 
         if(!profileRequestDto.isNewPasswordMatch()) {
             return;

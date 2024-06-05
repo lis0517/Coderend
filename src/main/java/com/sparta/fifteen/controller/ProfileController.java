@@ -2,10 +2,13 @@ package com.sparta.fifteen.controller;
 
 import com.sparta.fifteen.dto.ProfileRequestDto;
 import com.sparta.fifteen.dto.ProfileResponseDto;
+import com.sparta.fifteen.entity.User;
+import com.sparta.fifteen.security.UserDetailsImpl;
 import com.sparta.fifteen.service.ProfileService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +24,13 @@ public class ProfileController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<String> updateProfile(@RequestHeader("Authorization") String token,@RequestBody ProfileRequestDto ProfileRequestDto) {
+    public ResponseEntity<String> updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ProfileRequestDto ProfileRequestDto) {
 
 
         try {
-            Long userId = getUserIdFromToken(token);
+            User user = userDetails.getUser();
 
-            profileService.updateProfile(userId, ProfileRequestDto);
+            profileService.updateProfile(user, ProfileRequestDto);
 
             return ResponseEntity.ok().body("프로필 수정에 성공하였습니다.");
 
