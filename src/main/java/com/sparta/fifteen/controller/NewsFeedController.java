@@ -18,7 +18,7 @@ public class NewsFeedController {
     }
 
     @GetMapping("/newsfeed/{newsFeedID}")
-    public NewsFeedResponseDto readNewsFeed(@PathVariable int newsFeedID){
+    public NewsFeedResponseDto readNewsFeed(@PathVariable long newsFeedID){
         return newsFeedService.getNewsFeed(newsFeedID);
     }
 
@@ -28,12 +28,12 @@ public class NewsFeedController {
     }
 
     @PutMapping("/newsfeed/{newsFeedID}")
-    public NewsFeedResponseDto updateNewsFeed(@PathVariable int newsFeedID, NewsFeedRequestDto newsFeedRequestDto){
+    public NewsFeedResponseDto updateNewsFeed(@PathVariable long newsFeedID, NewsFeedRequestDto newsFeedRequestDto){
         return newsFeedService.updateNewsFeed(newsFeedID, newsFeedRequestDto);
     }
 
     @DeleteMapping("/newsfeed/{newsFeedID}")
-    public int deleteNewsFeed(@PathVariable int newsFeedID){
+    public long deleteNewsFeed(@PathVariable long newsFeedID){
         return newsFeedService.deleteNewsFeed(newsFeedID);
     }
 }

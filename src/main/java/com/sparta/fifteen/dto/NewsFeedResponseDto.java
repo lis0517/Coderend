@@ -12,8 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewsFeedResponseDto {
-    private int id;
-    private int authorId;
+    private Long id;
+    private Long authorId;
     private String content;
 
     public NewsFeedResponseDto(NewsFeed newsFeed) {
