@@ -1,15 +1,15 @@
 package com.sparta.fifteen.service;
 
-import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.dto.UserLoginRequestDto;
-import com.sparta.fifteen.entity.RefreshToken;
-import com.sparta.fifteen.entity.UserStatusEnum;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.entity.User;
-import com.sparta.fifteen.repository.RefreshTokenRepository;
+import com.sparta.fifteen.entity.UserStatusEnum;
+import com.sparta.fifteen.entity.token.RefreshToken;
 import com.sparta.fifteen.repository.UserRepository;
+import com.sparta.fifteen.service.token.RefreshTokenService;
 import com.sparta.fifteen.util.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,22 +62,12 @@ public class UserService {
             // 토큰 생성 위치
             if(passwordEncoder.matches(requestDto.getPassword(), registeredUser.getPassword())) {
                 String accessToken = JwtTokenProvider.generateAccessToken(requestDto.getUsername());
-                String refreshToken = JwtTokenProvider.generateRefreshToken();
-                Long expirationTime = JwtConfig.staticRefreshTokenExpiration;
+                RefreshToken refreshToken = refreshTokenService.updateRefreshToken(registeredUser);
 
-                RefreshToken userRefreshToken = registeredUser.getUserRefreshToken();
-                if(userRefreshToken == null) {
-                    userRefreshToken = RefreshToken.from(registeredUser.getUsername(), refreshToken, expirationTime);
-                    registeredUser.setUserRefreshToken(userRefreshToken);
-                } else {
-                    userRefreshToken.updateRefreshToken(refreshToken);
-                }
                 userRepository.save(registeredUser);
+                JwtTokenProvider.setRefreshTokenAtCookie(refreshToken);
 
-                // Header에 accessToken 추가
-                response.setHeader("Authorization", "Bearer " + accessToken);
-
-                return "성공";
+                return accessToken;
             }
         }
         throw new InputMismatchException("아이디, 패스워드 불일치");
@@ -89,33 +79,23 @@ public class UserService {
             User user = optionalUser.get();
             System.out.println("User found: " + user.getUsername());
 
-            // RefreshToken 확인
-            RefreshToken userRefreshToken = user.getUserRefreshToken();
-            if (userRefreshToken != null) {
-                System.out.println("RefreshToken found: " + userRefreshToken.getId());
-
-                // 리프레시 토큰 찾기
-                RefreshToken refreshToken = refreshTokenService.findRefreshTokenById(userRefreshToken.getId());
-                if (refreshToken != null) {
-                    System.out.println("RefreshToken in DB found: " + refreshToken.getId());
-
-                    // User의 refreshToken 참조를 null로 설정
-                    user.setUserRefreshToken(null);
-                    userRepository.save(user); // 변경사항 저장
-                    System.out.println("User-RefreshToken association cleared");
-
-                    // RefreshToken 삭제
-                    refreshTokenService.deleteRefreshTokenById(refreshToken.getId());
-                    System.out.println("RefreshToken deleted: " + refreshToken.getId());
-                } else {
-                    System.out.println("RefreshToken not found in DB");
-                }
-            } else {
-                // 리프레시 토큰이 없는 경우 처리
-                System.out.println("User has no RefreshToken");
-            }
+            //user.setUserRefreshToken(null); // todo : 없는 채로 테스트 해보기
+            userRepository.save(user); // 변경사항 저장
+            // RefreshToken 제거
+            refreshTokenService.deleteByUser(user);
         } else {
             System.out.println("User not found");
         }
+    }
+
+    public String refreshToken(HttpServletRequest request){
+        String token = JwtTokenProvider.getRefreshTokenFromRequest(request);
+        if (token != null && !JwtTokenProvider.isTokenExpired(token)){
+            // refresh token으로 user 얻어오기
+            User user = refreshTokenService.findUserByToken(token);
+            // 새로운 access token 생성
+            return JwtTokenProvider.generateAccessToken(user.getUsername());
+        }
+        return null;
     }
 }

@@ -1,12 +1,13 @@
 package com.sparta.fifteen.controller;
 
+import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.dto.UserLoginRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
-import com.sparta.fifteen.security.UserDetailsImpl;
 import com.sparta.fifteen.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +43,7 @@ public class UserController {
     private ResponseEntity<?> userLogin(@RequestBody UserLoginRequestDto requestDto, HttpServletResponse response) {
         try {
             String token = userService.loginUser(requestDto, response);
-            return ResponseEntity.ok().body(token);
+            return ResponseEntity.ok().header(JwtConfig.staticHeader, JwtConfig.staticTokenPrefix + token).body(token);
         } catch (InputMismatchException e) {
             return ResponseEntity.badRequest().body("아이디 또는 비밀번호를 확인해주세요. 로그인에 실패하셨습니다.");
         }
@@ -64,6 +65,19 @@ public class UserController {
             return ResponseEntity.ok().body("로그아웃되었습니다.");
         } catch (InputMismatchException e) {
             return ResponseEntity.badRequest().body("아이디 또는 비밀번호를 확인해주세요. 로그인에 실패하셨습니다.");
+        }
+    }
+
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request){
+        String newAccessToken = userService.refreshToken(request);
+        if (newAccessToken != null){
+            return ResponseEntity.ok()
+                    .header(JwtConfig.staticHeader, JwtConfig.staticTokenPrefix + newAccessToken)
+                    .body(newAccessToken);
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token.");
         }
     }
 }

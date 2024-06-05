@@ -1,6 +1,6 @@
 package com.sparta.fifteen.dto;
 
-import com.sparta.fifteen.entity.RefreshToken;
+import com.sparta.fifteen.entity.token.RefreshToken;
 import com.sparta.fifteen.entity.User;
 import lombok.Getter;
 
@@ -25,7 +25,7 @@ public class UserRegisterResponseDto {
         this.name = user.getName();
         this.email = user.getEmail();
         this.oneLine = user.getOneLine();
-        this.userRefreshToken = user.getUserRefreshToken();
+        this.userRefreshToken = user.getRefreshToken();
         this.statusCode = user.getStatusCode();
         this.createdOn = user.getCreatedOn();
     }
