@@ -36,8 +36,9 @@ public class UserService {
         user.setCreatedOn(new Timestamp(System.currentTimeMillis()));
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         // 유저 상태 적기
+        UserStatusEnum userStatusEnum =UserStatusEnum.NORMAL;
+        user.setStatusCode(userStatusEnum.name());
         userRepository.save(user);
-
         return new UserRegisterResponseDto(user);
     }
 }
