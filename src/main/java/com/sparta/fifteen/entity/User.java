@@ -1,6 +1,5 @@
 package com.sparta.fifteen.entity;
 
-import com.sparta.fifteen.dto.ProfileRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import jakarta.persistence.*;
@@ -76,13 +75,14 @@ public class User {
         this.modifiedOn = getModifiedOn();
     }
 
-    public void updateProfile(ProfileRequestDto profileRequestDto) {
+    public void setUserRefreshToken(RefreshToken userRefreshToken) {
+        this.userRefreshToken = userRefreshToken;
+        if (userRefreshToken != null) {
+            userRefreshToken.setUser(this);
+        }
+    }
 
-        this.name = profileRequestDto.getName();
-        this.password = profileRequestDto.getNewPassword();
-        this.oneLine = profileRequestDto.getOneline();
-        this.email = profileRequestDto.getEmail();
-        this.modifiedOn = getModifiedOn();
-
+    public RefreshToken getUserRefreshToken() {
+        return userRefreshToken;
     }
 }
