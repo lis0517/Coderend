@@ -41,19 +41,15 @@ public class ProfileController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<ProfileResponseDto> getProfile(@RequestHeader("Authorization") String token) {
-        HttpHeaders headers = new HttpHeaders();
+    public ResponseEntity<ProfileResponseDto> getProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        if (token == null || token.isEmpty() || !token.startsWith("Bearer ")) {
-            headers.add("Message", "프로필 조회에 실패하셨습니다.");
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
-        }
+        HttpHeaders headers = new HttpHeaders();
 
         try {
 
-            Long userId = getUserIdFromToken(token);
+            User user = userDetails.getUser();
 
-            ProfileResponseDto userProfile = profileService.getUserProfile(userId);
+            ProfileResponseDto userProfile = profileService.getUserProfile(user);
 
             if (userProfile == null) {
                 headers.add("Message", "프로필 조회에 실패하였습니다.");
@@ -69,9 +65,5 @@ public class ProfileController {
         }
     }
 
-    private Long getUserIdFromToken(String token) {
-
-        return 1L;
-    }
 
 }

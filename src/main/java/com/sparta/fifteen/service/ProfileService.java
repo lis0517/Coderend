@@ -29,8 +29,8 @@ public class ProfileService {
     }
 
     @Transactional
-    public  ProfileResponseDto getUserProfile(Long userId) {
-        User user = userRepository.findByUserId(userId);
+    public  ProfileResponseDto getUserProfile(User user) {
+
         if (user == null) {
             return null;
         }
