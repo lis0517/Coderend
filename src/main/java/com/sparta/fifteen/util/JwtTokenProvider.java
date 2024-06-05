@@ -2,6 +2,7 @@ package com.sparta.fifteen.util;
 
 import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.entity.RefreshToken;
+import com.sparta.fifteen.entity.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -46,7 +47,7 @@ public final class JwtTokenProvider {
     // Access Token 생성
     public static String generateAccessToken(String username){
         return Jwts.builder()
-                .setClaims(new HashMap<>())
+                .claim(JwtConfig.staticAuthorizationKey, UserRoleEnum.USER)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JwtConfig.staticAccessTokenExpiration))
@@ -56,8 +57,9 @@ public final class JwtTokenProvider {
     // Refresh Token 생성
     // subject 사용하지않음
     public static String generateRefreshToken(){
+
         return Jwts.builder()
-                .setClaims(new HashMap<>())
+                .claim(JwtConfig.staticAuthorizationKey, UserRoleEnum.USER)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JwtConfig.staticRefreshTokenExpiration))
                 .signWith(getSecretKey()).compact();
