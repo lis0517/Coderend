@@ -1,12 +1,13 @@
 package com.sparta.fifteen.util;
 
 import com.sparta.fifteen.config.JwtConfig;
-import com.sparta.fifteen.entity.RefreshToken;
 import com.sparta.fifteen.entity.UserRoleEnum;
+import com.sparta.fifteen.entity.token.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -14,10 +15,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Objects;
 
 public final class JwtTokenProvider {
+
+    private static final String REFRESH_TOKEN_COOKIE_NAME = "RefreshToken";
 
     private JwtTokenProvider(){
     }
@@ -36,7 +38,7 @@ public final class JwtTokenProvider {
 
     // 토큰 만료 확인
     public static Boolean isTokenExpired(String token){
-        return extractExpiration(token).before(new Date());
+        return extractExpiration(token).before(new Date(System.currentTimeMillis()));
     }
 
     public static Boolean validateToken(String token, String username){
@@ -65,12 +67,25 @@ public final class JwtTokenProvider {
                 .signWith(getSecretKey()).compact();
     }
 
+    // cookie에서 refresh token 가져오기
+    public static String getRefreshTokenFromRequest(HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        if(cookies != null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals(REFRESH_TOKEN_COOKIE_NAME)){
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     // Refresh Token 쿠키에 저장
-    public void setRefreshTokenAtCookie(RefreshToken refreshToken){
-        Cookie cookie = new Cookie("RefreshToken", refreshToken.getRefreshToken());
+    public static void setRefreshTokenAtCookie(RefreshToken refreshToken){
+        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken.getToken());
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(refreshToken.getExpiration().intValue());
+        cookie.setMaxAge(JwtConfig.staticRefreshTokenExpirationSecond);
         HttpServletResponse response = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder
                 .getRequestAttributes())).getResponse();
         assert response != null;
@@ -82,6 +97,7 @@ public final class JwtTokenProvider {
         return Keys.hmacShaKeyFor(JwtConfig.staticSecretKey.getBytes(StandardCharsets.UTF_8));
     }
 
+    // 추출
     private static Claims extractAllClaims(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(getSecretKey())
