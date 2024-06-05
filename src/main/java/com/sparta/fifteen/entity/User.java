@@ -1,5 +1,6 @@
 package com.sparta.fifteen.entity;
 
+import com.sparta.fifteen.dto.ProfileRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import jakarta.persistence.*;
@@ -72,16 +73,5 @@ public class User {
         this.statusChangedTime = getStatusChangedTime();
         this.createdOn = getCreatedOn();
         this.modifiedOn = getModifiedOn();
-    }
-
-    public void setUserRefreshToken(RefreshToken userRefreshToken) {
-        this.userRefreshToken = userRefreshToken;
-        if (userRefreshToken != null) {
-            userRefreshToken.setUser(this);
-        }
-    }
-
-    public RefreshToken getUserRefreshToken() {
-        return userRefreshToken;
     }
 }
