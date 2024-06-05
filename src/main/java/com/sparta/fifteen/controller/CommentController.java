@@ -25,7 +25,7 @@ public class CommentController {
         this.newsFeedService = newsFeedService;
     }
 
-    @PostMapping("{/{newsfeedId}")
+    @PostMapping("/{newsfeedId}")
     public ResponseEntity<CommentResponseDto> createComment(@PathVariable("newsfeedId") Long newsFeedId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         NewsFeed newsFeed = newsFeedService.findNewsFeedById(newsFeedId);

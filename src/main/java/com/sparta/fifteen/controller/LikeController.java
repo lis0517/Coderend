@@ -37,7 +37,7 @@ public class LikeController {
 
 
 
-    @PostMapping("newsfeed/{newsfeedId}/comments/{commentId}/likeToggle")
+    @PostMapping("/newsfeed/{newsfeedId}/comments/{commentId}/likeToggle")
     public ResponseEntity<String> toggleLikeComment( @AuthenticationPrincipal UserDetailsImpl userDetails,
                                              @PathVariable Long commentId) {
 
