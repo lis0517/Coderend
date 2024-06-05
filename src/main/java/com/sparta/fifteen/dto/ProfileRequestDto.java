@@ -11,8 +11,7 @@ public class ProfileRequestDto {
     @Pattern(regexp = "^[a-zA-Z0-9]*$")
     private String name;
 
-    @Email
-    private String email;
+
 
     private String oneline;
 
