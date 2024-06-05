@@ -13,7 +13,7 @@ import lombok.Setter;
 public class NewsFeed extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Column(nullable = false)
     private int authorId;
     @Column(nullable = false)
