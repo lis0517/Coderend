@@ -82,4 +82,14 @@ public class User {
 
         this.modifiedOn = getModifiedOn();
     }
+    public void setUserRefreshToken(RefreshToken userRefreshToken) {
+        this.userRefreshToken = userRefreshToken;
+        if (userRefreshToken != null) {
+            userRefreshToken.setUser(this);
+        }
+    }
+
+    public RefreshToken getUserRefreshToken() {
+        return userRefreshToken;
+    }
 }
