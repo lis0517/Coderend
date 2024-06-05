@@ -4,6 +4,7 @@ import com.sparta.fifteen.dto.CommentRequestDto;
 import com.sparta.fifteen.dto.CommentResponseDto;
 import com.sparta.fifteen.entity.NewsFeed;
 import com.sparta.fifteen.entity.User;
+import com.sparta.fifteen.security.UserDetailsImpl;
 import com.sparta.fifteen.service.CommentService;
 import com.sparta.fifteen.service.NewsFeedService;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/newsfeed/{newsfeedId}/comments")
+@RequestMapping("/api/newsfeeds/{newsfeedId}/comments")
 public class CommentController {
     private final CommentService commentService;
     private final NewsFeedService newsFeedService;
@@ -23,9 +24,10 @@ public class CommentController {
     }
 
     @GetMapping("")
-    public ResponseEntity<String> createComment(@PathVariable("newsfeedId") Long newsFeedId, @RequestBody CommentRequestDto commentRequestDto) {
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable("newsfeedId") Long newsFeedId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
         NewsFeed newsFeed = newsFeedService.findNewsFeedById(newsFeedId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("성공했습니다.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(user, newsFeed, commentRequestDto));
     }
 }
