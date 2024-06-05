@@ -1,19 +1,22 @@
 package com.sparta.fifteen.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class Timestamped {
 
     @CreatedDate
     @Column(updatable = false)
-    private String createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private String modifiedAt;
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime modifiedAt;
 }

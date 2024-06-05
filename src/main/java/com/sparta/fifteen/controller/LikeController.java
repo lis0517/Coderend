@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/like")
+@RequestMapping("/api")
 @Validated
 public class LikeController {
 
@@ -19,13 +19,29 @@ public class LikeController {
         this.likeService = likeService;
     }
 
-    @PostMapping("/{contentType}/{contentId}")
-    public ResponseEntity<String> toggleLike(@RequestHeader("Authorization") String token,
-                                             @PathVariable Long contentId, ContentTypeEnum contentType) {
+    @PostMapping("/newsfeed/{newsfeedId}/likeToggle")
+    public ResponseEntity<String> toggleLikeNewsFeed(@RequestHeader("Authorization") String token,
+                                             @PathVariable Long newsfeedId) {
 
         try {
             Long userId = getUserIdFromToken(token);
-            likeService.likeOrUnlike(userId, contentId, contentType);
+            likeService.likeOrUnlike(userId, newsfeedId, ContentTypeEnum.NEWSFEED_TYPE);
+            return new ResponseEntity<>("좋아요 토글 성공", HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("좋아요 토글 실패", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+    @PostMapping("newsfeed/{newsfeedId}/comments/{commentId}/likeToggle")
+    public ResponseEntity<String> toggleLikeComment(@RequestHeader("Authorization") String token,
+                                             @PathVariable Long commentId) {
+
+        try {
+            Long userId = getUserIdFromToken(token);
+            likeService.likeOrUnlike(userId, commentId, ContentTypeEnum.COMMENT_TYPE);
             return new ResponseEntity<>("좋아요 토글 성공", HttpStatus.OK);
 
         } catch (Exception e) {

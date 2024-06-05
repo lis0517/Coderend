@@ -27,7 +27,7 @@ public class UserRegisterRequestDto {
 
     @Email
     private String email;
-    private String oneline;
+    private String oneLine;
 
     private String statusCode;
     private String refreshToken;
