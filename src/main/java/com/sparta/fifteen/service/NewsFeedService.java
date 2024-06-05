@@ -46,4 +46,9 @@ public class NewsFeedService {
         newsFeedRepository.delete(newsFeed);
         return newsFeedID;
     }
+
+    public NewsFeed findNewsFeedById(long newsFeedID) {
+        return newsFeedRepository.findById(newsFeedID).orElseThrow(() -> new IllegalArgumentException("선택한 뉴스피드는 존재하지 않습니다."));
+    }
+
 }

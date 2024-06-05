@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface NewsFeedRepository extends JpaRepository<NewsFeed, Integer> {
+public interface NewsFeedRepository extends JpaRepository<NewsFeed, Long> {
     List<NewsFeed> findAllByOrderByCreatedAtDesc();
 }
