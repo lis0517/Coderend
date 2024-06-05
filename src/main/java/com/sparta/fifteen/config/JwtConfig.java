@@ -42,7 +42,7 @@ public class JwtConfig {
         staticAuthorizationKey = AUTHORIZATION_KEY;
         staticHeader = HEADER_STRING;
         staticTokenPrefix = TOKEN_PREFIX;
-        staticAccessTokenExpiration = ACCESS_TOKEN_EXPIRATION; // test : 1분
-        staticRefreshTokenExpiration = REFRESH_TOKEN_EXPIRATION; // test : 5분
+        staticAccessTokenExpiration = ACCESS_TOKEN_EXPIRATION; // 30분
+        staticRefreshTokenExpiration = REFRESH_TOKEN_EXPIRATION; // 2주
     }
 }
