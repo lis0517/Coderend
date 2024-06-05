@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "comment")
 @Getter
 @NoArgsConstructor
-public class Comment {
+public class Comment extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,12 +21,13 @@ public class Comment {
     private User user;
 
     //뉴스피드 entity 생기면 뉴스피드 id 가져와야 함!
-//    @ManyToOne
-//    @JoinColumn(name = "newsfeed_id", nullable = false)
-//    private Newsfeed newsfeed;
+    @ManyToOne
+    @JoinColumn(name = "newsfeed_id", nullable = false)
+    private NewsFeed newsfeed;
 
-    public Comment(String comment, User user) {
+    public Comment(String comment, User user, NewsFeed newsfeed) {
         this.comment = comment;
         this.user = user;
+        this.newsfeed = newsfeed;
     }
 }
