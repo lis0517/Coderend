@@ -41,8 +41,8 @@ public class User {
     @Email
     private String email;
 
-    @Column(length = 36, unique = true)
-    private String refreshToken;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private RefreshToken userRefreshToken;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp statusChangedTime;
@@ -67,7 +67,6 @@ public class User {
         this.password = requestDto.getPassword();
         this.name = requestDto.getName();
         this.oneLine = requestDto.getOneLine();
-        this.refreshToken = requestDto.getRefreshToken();
         this.email = requestDto.getEmail();
         this.statusCode = getStatusCode();
         this.statusChangedTime = getStatusChangedTime();
@@ -75,4 +74,14 @@ public class User {
         this.modifiedOn = getModifiedOn();
     }
 
+    public void setUserRefreshToken(RefreshToken userRefreshToken) {
+        this.userRefreshToken = userRefreshToken;
+        if (userRefreshToken != null) {
+            userRefreshToken.setUser(this);
+        }
+    }
+
+    public RefreshToken getUserRefreshToken() {
+        return userRefreshToken;
+    }
 }

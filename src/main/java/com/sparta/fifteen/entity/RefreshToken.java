@@ -16,6 +16,10 @@ public class RefreshToken {
 
     private Long expiration;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public static RefreshToken from(String username, String refreshToken, Long expirationTime){
         return RefreshToken.builder()
                 .id(username)
@@ -34,5 +38,13 @@ public class RefreshToken {
 
     public Boolean validRefreshToken(String refreshToken){
         return this.refreshToken.equals(refreshToken);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 }
