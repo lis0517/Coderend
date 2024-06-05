@@ -4,6 +4,7 @@ import com.sparta.fifteen.dto.UserLoginRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,9 +37,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    private ResponseEntity<?> userLogin(@RequestBody UserLoginRequestDto requestDto) {
+    private ResponseEntity<?> userLogin(@RequestBody UserLoginRequestDto requestDto, HttpServletResponse response) {
         try {
-            String token = userService.loginUser(requestDto.getUsername(), requestDto.getPassword());
+            String token = userService.loginUser(requestDto, response);
             return ResponseEntity.ok().body(token);
         } catch (InputMismatchException e) {
             return ResponseEntity.badRequest().body("아이디 또는 비밀번호를 확인해주세요. 로그인에 실패하셨습니다.");
