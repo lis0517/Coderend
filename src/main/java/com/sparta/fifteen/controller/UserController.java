@@ -5,15 +5,13 @@ import com.sparta.fifteen.dto.UserLoginRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.service.UserService;
+import com.sparta.fifteen.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.InputMismatchException;
 
@@ -50,18 +48,22 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    private ResponseEntity<?> userLogout(@RequestBody UserLoginRequestDto requestDto, HttpServletResponse response) {
+    private ResponseEntity<?> userLogout(@RequestHeader("Authorization") String authorizationHeader) {
         try {
-            // UserDetails에서 사용자 이름 가져오기
-            String userDetailsUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-            // requestDto에서 사용자 이름 가져오기
-            String requestDtoUsername = requestDto.getUsername();
+            String accessToken = authorizationHeader.replace(JwtConfig.staticTokenPrefix, "");
 
+            // UserDetails에서 사용자 이름 가져오기
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            System.out.println(accessToken + ", " + username);
+            // requestDto에서 사용자 이름 가져오기
+            //String requestDtoUsername = requestDto.getUsername();
+
+            userService.logoutUser(accessToken, username);
             // 사용자 이름이 일치하는지 확인
-            if (userDetailsUsername.equals(requestDtoUsername)) {
+            //if (userDetailsUsername.equals(requestDtoUsername)) {
                 // 로그아웃 실행
-                userService.logoutUser(requestDtoUsername);
-            }
+
+            //}
             return ResponseEntity.ok().body("로그아웃되었습니다.");
         } catch (InputMismatchException e) {
             return ResponseEntity.badRequest().body("아이디 또는 비밀번호를 확인해주세요. 로그인에 실패하셨습니다.");
