@@ -2,6 +2,7 @@ package com.sparta.fifteen.jwt;
 
 import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.security.UserDetailsServiceImpl;
+import com.sparta.fifteen.service.token.LogoutAccessTokenService;
 import com.sparta.fifteen.util.JwtTokenProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -23,8 +24,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    public JwtAuthenticationFilter(UserDetailsServiceImpl userDetailsService){
+    private final LogoutAccessTokenService logoutAccessTokenService;
+
+    public JwtAuthenticationFilter(UserDetailsServiceImpl userDetailsService, LogoutAccessTokenService logoutAccessTokenService){
         this.userDetailsService = userDetailsService;
+        this.logoutAccessTokenService = logoutAccessTokenService;
     }
 
     @Override
@@ -34,11 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain) throws ServletException, IOException {
 
         String header = request.getHeader(JwtConfig.staticHeader);
+        log.info(header);
         String username = null;
         String authToken = null;
 
         if (header != null && header.startsWith(JwtConfig.staticTokenPrefix)){
             authToken = header.replace(JwtConfig.staticTokenPrefix,"");
+            log.info(authToken);
             try {
                 username = JwtTokenProvider.extractUsername(authToken);
             } catch(IllegalArgumentException e){
@@ -58,6 +64,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
+            if(logoutAccessTokenService.existsLogoutAccessToken(authToken)){
+                // 로그아웃된 토큰인 경우 인증 거부
+                log.error("User already logout.");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User already logout.");
+            }
+
             if(JwtTokenProvider.validateToken(authToken, username)){
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -67,5 +79,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
+        String authorization = request.getHeader(JwtConfig.staticHeader);
+
+        return authorization == null; //  header의 값이 null이면 해당 Filter(토큰 검증)의 동작을 수행하지 않도록 정의
     }
 }
