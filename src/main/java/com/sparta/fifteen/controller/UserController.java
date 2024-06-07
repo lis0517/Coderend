@@ -1,13 +1,11 @@
 package com.sparta.fifteen.controller;
 
 import com.sparta.fifteen.config.JwtConfig;
-import com.sparta.fifteen.dto.UserRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
+import com.sparta.fifteen.dto.UserRequestDto;
 import com.sparta.fifteen.service.UserService;
-import com.sparta.fifteen.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
