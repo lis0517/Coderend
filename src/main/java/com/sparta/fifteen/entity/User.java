@@ -55,7 +55,6 @@ public class User {
     private Timestamp modifiedOn;
 
     // email인증 필드
-    private boolean isEmailVerified;
     private String emailVerificationCode;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp emailVerificationSendTime;

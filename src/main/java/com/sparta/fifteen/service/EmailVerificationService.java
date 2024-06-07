@@ -33,7 +33,7 @@ public class EmailVerificationService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("사용자 ID가 존재하지 않습니다."));
 
-        if (user.isEmailVerified()) {
+        if (user.getStatusCode().equals(String.valueOf(UserStatusEnum.NORMAL.getStatus()))) {
             throw new EmailAlreadyVerifiedException("이메일이 이미 인증되었습니다.");
         }
 
@@ -46,7 +46,6 @@ public class EmailVerificationService {
             throw new VerificationCodeExpiredException("인증 코드가 만료되었습니다.");
         }
 
-        user.setEmailVerified(true);
         user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus()));
         userRepository.save(user);
     }

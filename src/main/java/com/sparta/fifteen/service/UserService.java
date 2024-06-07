@@ -9,7 +9,6 @@ import com.sparta.fifteen.error.UserAlreadyExistsException;
 import com.sparta.fifteen.error.UserNotFoundException;
 import com.sparta.fifteen.error.UserWithdrawnException;
 import com.sparta.fifteen.repository.UserRepository;
-import com.sparta.fifteen.service.token.LogoutAccessTokenService;
 import com.sparta.fifteen.service.token.RefreshTokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,18 +23,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
-    private final LogoutAccessTokenService logoutAccessTokenService;
     private final EmailVerificationService emailVerificationService;
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        RefreshTokenService refreshTokenService,
-                       LogoutAccessTokenService logoutAccessTokenService,
                        EmailVerificationService emailVerificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
-        this.logoutAccessTokenService = logoutAccessTokenService;
         this.emailVerificationService = emailVerificationService;
     }
 

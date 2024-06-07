@@ -87,18 +87,22 @@ public class UserController {
     @PutMapping("/user")
     public ResponseEntity<?> userWithdraw(@RequestBody UserRequestDto requestDto) {
         try {
-            // UserDetails에서 사용자 이름 가져오기
+            // UserDetails에서 현재 로그인한 사용자 이름 가져오기
             String userDetailsUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-            // requestDto에서 사용자 이름 가져오기
+            // 요청된 DTO에서 사용자 이름 가져오기
             String requestDtoUsername = requestDto.getUsername();
 
-            // 사용자 이름이 일치하는지 확인
+            // 현재 로그인한 사용자와 탈퇴하려는 사용자가 같은지 확인
             if (userDetailsUsername.equals(requestDtoUsername)) {
                 userService.withdrawUser(requestDtoUsername, requestDto.getPassword());
+                return ResponseEntity.ok().body("회원 탈퇴가 완료되었습니다.");
+            } else {
+                // 현재 로그인한 사용자와 탈퇴하려는 사용자가 다른 경우
+                return ResponseEntity.badRequest().body("현재 로그인한 사용자가 아닙니다.");
             }
-            return ResponseEntity.ok().body("회원 탈퇴.");
         } catch (InputMismatchException e) {
             return ResponseEntity.badRequest().body("아이디 또는 비밀번호를 확인해주세요.");
         }
     }
+
 }
