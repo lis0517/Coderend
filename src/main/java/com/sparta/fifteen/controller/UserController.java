@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.InputMismatchException;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
@@ -23,7 +23,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/user")
     private ResponseEntity<?> signup(@RequestBody UserRegisterRequestDto requestDto) {
         try {
             UserRegisterResponseDto responseDto = userService.registerUser(requestDto);
@@ -35,7 +35,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     private ResponseEntity<?> userLogin(@RequestBody UserRequestDto requestDto) {
         try {
             String token = userService.loginUser(requestDto);
@@ -45,7 +45,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/user/logout")
     private ResponseEntity<?> userLogout(@RequestHeader("Authorization") String authorizationHeader) {
         try {
             String accessToken = authorizationHeader.replace(JwtConfig.staticTokenPrefix, "");
@@ -81,7 +81,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/withdraw")
+    @PutMapping("/user")
     public ResponseEntity<?> userWithdraw(@RequestBody UserRequestDto requestDto) {
         try {
             // UserDetails에서 사용자 이름 가져오기

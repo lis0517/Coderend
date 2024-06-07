@@ -143,7 +143,7 @@ public class UserService {
         user.setStatusCode(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()));
         user.setModifiedOn(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user);
-
+        System.out.println("여기까지는 왔다");
         // refresh token 무효화
         refreshTokenService.deleteByUser(user);
     }
