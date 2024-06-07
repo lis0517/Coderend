@@ -4,6 +4,8 @@ import com.sparta.fifteen.dto.NewsFeedRequestDto;
 import com.sparta.fifteen.dto.NewsFeedResponseDto;
 import com.sparta.fifteen.entity.NewsFeed;
 import com.sparta.fifteen.repository.NewsFeedRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,16 +14,25 @@ import java.util.List;
 @Service
 public class NewsFeedService {
     private final NewsFeedRepository newsFeedRepository;
+    private final UserService userService;
 
-    public NewsFeedService(NewsFeedRepository newsFeedRepository) {
+    public NewsFeedService(NewsFeedRepository newsFeedRepository, UserService userService) {
         this.newsFeedRepository = newsFeedRepository;
+        this.userService = userService;
     }
 
-    public NewsFeedResponseDto createNewsFeed(NewsFeedRequestDto newsFeedRequestDto){
-        NewsFeed newsFeed = new NewsFeed(newsFeedRequestDto);
-        newsFeedRepository.save(newsFeed);
-        NewsFeedResponseDto newsFeedResponseDto=new NewsFeedResponseDto(newsFeed);
-        return newsFeedResponseDto;
+    public NewsFeed createNewsFeed(NewsFeedRequestDto newsFeedRequestDto) {
+        // Get the current logged-in user's ID
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long authorId = userService.getUserIdByUsername(userDetails.getUsername());
+
+        // Create a new NewsFeed entity with the authorId and content from the DTO
+        NewsFeed newsFeed = new NewsFeed();
+        newsFeed.setAuthorId(authorId);
+        newsFeed.setContent(newsFeedRequestDto.getContent());
+
+        // Save the entity to the repository
+        return newsFeedRepository.save(newsFeed);
     }
 
     public NewsFeedResponseDto getNewsFeed(long newsFeedID) {

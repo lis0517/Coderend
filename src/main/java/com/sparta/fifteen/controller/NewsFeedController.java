@@ -15,9 +15,8 @@ public class NewsFeedController {
     public NewsFeedController(NewsFeedService newsFeedService) {
         this.newsFeedService = newsFeedService;
     }
-
     @PostMapping("/newsfeed")
-    public NewsFeedResponseDto create(@RequestBody  NewsFeedRequestDto newsFeedRequestDto){
+    public NewsFeed create(@RequestBody NewsFeedRequestDto newsFeedRequestDto) throws NewsFeedCreateErrorException {
         return newsFeedService.createNewsFeed(newsFeedRequestDto);
     }
 
