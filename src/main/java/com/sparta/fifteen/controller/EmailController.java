@@ -6,6 +6,7 @@ import com.sparta.fifteen.error.UserNotFoundException;
 import com.sparta.fifteen.error.VerificationCodeExpiredException;
 import com.sparta.fifteen.error.VerificationCodeMismatchException;
 import com.sparta.fifteen.service.EmailService;
+import com.sparta.fifteen.service.EmailVerificationService;
 import com.sparta.fifteen.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class EmailController {
 
-    private final EmailService emailService;
-    private final UserService userService;
+    private final EmailVerificationService emailVerificationService;
 
-    public EmailController(EmailService emailService, UserService userService) {
-        this.emailService = emailService;
-        this.userService = userService;
+    public EmailController( EmailVerificationService emailVerificationService) {
+        this.emailVerificationService = emailVerificationService;
     }
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyEmail(@RequestBody EmailVerifyRequestDto requestDto) {
         try {
-            userService.verifyEmail(requestDto.getUsername(), requestDto.getVerificationCode());
+            emailVerificationService.verifyEmail(requestDto.getUsername(), requestDto.getVerificationCode());
             return ResponseEntity.ok("이메일 인증이 완료되었습니다.");
         } catch (EmailAlreadyVerifiedException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
