@@ -2,6 +2,7 @@ package com.sparta.fifteen.config;
 
 import com.sparta.fifteen.jwt.JwtAuthenticationFilter;
 import com.sparta.fifteen.security.UserDetailsServiceImpl;
+import com.sparta.fifteen.service.token.LogoutAccessTokenService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +22,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService){
+
+    private final LogoutAccessTokenService logoutAccessTokenService;
+
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, LogoutAccessTokenService logoutAccessTokenService){
         this.userDetailsService = userDetailsService;
+        this.logoutAccessTokenService = logoutAccessTokenService;
     }
 
     @Bean
@@ -37,7 +42,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception{
-        return new JwtAuthenticationFilter(userDetailsService);
+        return new JwtAuthenticationFilter(userDetailsService, logoutAccessTokenService);
     }
 
     @Bean
