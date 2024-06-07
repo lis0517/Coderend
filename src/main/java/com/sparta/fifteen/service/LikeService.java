@@ -1,10 +1,12 @@
 package com.sparta.fifteen.service;
 
 import com.sparta.fifteen.entity.*;
+import com.sparta.fifteen.error.CommentNotFoundException;
 import com.sparta.fifteen.error.PostNotFoundException;
 import com.sparta.fifteen.error.SelfPostLikeException;
 import com.sparta.fifteen.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -25,6 +27,7 @@ public class LikeService {
         this.newsFeedRepository = newsFeedRepository;
     }
 
+    @Transactional
     public void likeOrUnlike(User user, Long contentId, ContentTypeEnum contentType) {
 
         Long userId = user.getId();
@@ -47,17 +50,16 @@ public class LikeService {
                 likeNewsFeedRepository.save(like);
             }
         }else{
-            Optional<Comment> comment = commentRepository.findById(contentId);
-            if(comment.isEmpty()) {
-                throw new PostNotFoundException("선택된 댓글은 존재하지 않습니다."); // 예외 처리로 수정
-            }
+            Comment comment = commentRepository.findById(contentId).orElseThrow(() -> new CommentNotFoundException("선택된 댓글은 존재하지 않습니다."));
 
             Optional<LikeComment> existingLike = likeCommentRepository.findByUserIdAndCommentId(userId, contentId);
             if (existingLike.isPresent()) {
                 likeCommentRepository.delete(existingLike.get());
+                comment.updatelikes(-1L);
             } else {
-                LikeComment like = new LikeComment( user,  comment.get());
+                LikeComment like = new LikeComment( user,  comment);
                 likeCommentRepository.save(like);
+                comment.updatelikes(1L);
             }
         }
 

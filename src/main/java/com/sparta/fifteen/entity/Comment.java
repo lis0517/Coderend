@@ -34,4 +34,8 @@ public class Comment extends Timestamped{
     public void update(CommentRequestDto commentRequestDto) {
         this.comment = commentRequestDto.getComment();
     }
+
+    public void updatelikes(Long num){
+        this.likes += num;
+    }
 }
