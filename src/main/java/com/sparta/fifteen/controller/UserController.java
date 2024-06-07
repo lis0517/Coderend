@@ -4,6 +4,7 @@ import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.dto.UserRequestDto;
+import com.sparta.fifteen.service.AuthenticationService;
 import com.sparta.fifteen.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,11 @@ import java.util.InputMismatchException;
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthenticationService authenticationService) {
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping("/user")
@@ -38,7 +41,7 @@ public class UserController {
     @PostMapping("/user/login")
     private ResponseEntity<?> userLogin(@RequestBody UserRequestDto requestDto) {
         try {
-            String token = userService.loginUser(requestDto);
+            String token = authenticationService.loginUser(requestDto);
             return ResponseEntity.ok().header(JwtConfig.staticHeader, JwtConfig.staticTokenPrefix + token).body(token);
         } catch (InputMismatchException e) {
             return ResponseEntity.badRequest().body("아이디 또는 비밀번호를 확인해주세요. 로그인에 실패하셨습니다.");
@@ -56,7 +59,7 @@ public class UserController {
             // requestDto에서 사용자 이름 가져오기
             //String requestDtoUsername = requestDto.getUsername();
 
-            userService.logoutUser(accessToken, username);
+            authenticationService.logoutUser(accessToken, username);
             // 사용자 이름이 일치하는지 확인
             //if (userDetailsUsername.equals(requestDtoUsername)) {
                 // 로그아웃 실행
@@ -71,7 +74,7 @@ public class UserController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request){
-        String newAccessToken = userService.refreshToken(request);
+        String newAccessToken = authenticationService.refreshToken(request);
         if (newAccessToken != null){
             return ResponseEntity.ok()
                     .header(JwtConfig.staticHeader, JwtConfig.staticTokenPrefix + newAccessToken)
