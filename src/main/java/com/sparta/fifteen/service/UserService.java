@@ -1,6 +1,6 @@
 package com.sparta.fifteen.service;
 
-import com.sparta.fifteen.dto.UserLoginRequestDto;
+import com.sparta.fifteen.dto.UserRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.entity.User;
@@ -10,7 +10,6 @@ import com.sparta.fifteen.repository.UserRepository;
 import com.sparta.fifteen.service.token.RefreshTokenService;
 import com.sparta.fifteen.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -49,7 +48,7 @@ public class UserService {
         return new UserRegisterResponseDto(user);
     }
 
-    public String loginUser(UserLoginRequestDto requestDto, HttpServletResponse response) {
+    public String loginUser(UserRequestDto requestDto) {
         // DB에서 username 먼저 조회
         Optional<User> optionalUser = userRepository.findByUsername(requestDto.getUsername());
 
@@ -97,5 +96,23 @@ public class UserService {
             return JwtTokenProvider.generateAccessToken(user.getUsername());
         }
         return null;
+    }
+
+    public void withdrawUser(String username, String password) {
+        // 사용자 조회
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 ID가 존재하지 않습니다."));
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        // 이미 탈퇴한 사용자 확인
+        if (user.getStatusCode().equals(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()))) {
+            throw new IllegalArgumentException("이미 탈퇴한 사용자입니다.");
+        }
+
+        // 상태 코드 변경
+        user.setStatusCode(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()));
+        userRepository.save(user);
     }
 }
