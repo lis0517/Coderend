@@ -64,7 +64,8 @@ public class UserService {
         userRepository.save(user);
 
         // 이메일 발송
-        sendVerificationEmail(user);
+        // TODO : 현재 막아둔 상태로 추후 유효성 검사 추가 및 주석 해제
+        // sendVerificationEmail(user);
         return new UserRegisterResponseDto(user);
     }
 
@@ -78,6 +79,7 @@ public class UserService {
             if(registeredUser.getStatusCode().equals(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()))) {
                 throw new UserWithdrawnException("탈퇴한 계정");
             }
+            // 현재 상태 인증 대기라면 예외처리
             // 토큰 생성 위치
             if(passwordEncoder.matches(requestDto.getPassword(), registeredUser.getPassword())) {
                 String accessToken = JwtTokenProvider.generateAccessToken(requestDto.getUsername());
@@ -150,7 +152,7 @@ public class UserService {
         User user = new User(requestDto);
         user.setCreatedOn(new Timestamp(System.currentTimeMillis()));
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        user.setStatusCode(String.valueOf(UserStatusEnum.PENDING.getStatus())); // 인증 전 상태
+        user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus())); // 인증 전 상태
 
         String verificationCode = generateVerificationCode();
         user.setEmailVerificationCode(verificationCode);
