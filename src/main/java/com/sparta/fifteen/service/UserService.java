@@ -6,10 +6,7 @@ import com.sparta.fifteen.dto.UserRequestDto;
 import com.sparta.fifteen.entity.User;
 import com.sparta.fifteen.entity.UserStatusEnum;
 import com.sparta.fifteen.entity.token.RefreshToken;
-import com.sparta.fifteen.error.PasswordMismatchException;
-import com.sparta.fifteen.error.UserAlreadyExistsException;
-import com.sparta.fifteen.error.UserNotFoundException;
-import com.sparta.fifteen.error.UserWithdrawnException;
+import com.sparta.fifteen.error.*;
 import com.sparta.fifteen.repository.UserRepository;
 import com.sparta.fifteen.service.token.LogoutAccessTokenService;
 import com.sparta.fifteen.service.token.RefreshTokenService;
@@ -33,14 +30,18 @@ public class UserService {
 
     private final LogoutAccessTokenService logoutAccessTokenService;
 
+    private final EmailService emailService;
+
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        RefreshTokenService refreshTokenService,
-                       LogoutAccessTokenService logoutAccessTokenService) {
+                       LogoutAccessTokenService logoutAccessTokenService,
+                       EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
         this.logoutAccessTokenService = logoutAccessTokenService;
+        this.emailService = emailService;
     }
 
     public UserRegisterResponseDto registerUser(UserRegisterRequestDto requestDto) {
@@ -58,11 +59,12 @@ public class UserService {
         if (requestDto.getPassword().length() < 10) {
             throw new InputMismatchException("잘못된 비밀번호 형식");
         }
-        User user = new User(requestDto);
-        user.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus()));
+        // 사용자 초기화 및 저장
+        User user = initializeUser(requestDto);
         userRepository.save(user);
+
+        // 이메일 발송
+        sendVerificationEmail(user);
         return new UserRegisterResponseDto(user);
     }
 
@@ -137,6 +139,52 @@ public class UserService {
 
         // 상태 코드 변경
         user.setStatusCode(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()));
+        user.setModifiedOn(new Timestamp(System.currentTimeMillis()));
+        userRepository.save(user);
+
+        // refresh token 무효화
+        refreshTokenService.deleteByUser(user);
+    }
+
+    private User initializeUser (UserRegisterRequestDto requestDto) {
+        User user = new User(requestDto);
+        user.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.setStatusCode(String.valueOf(UserStatusEnum.PENDING.getStatus())); // 인증 전 상태
+
+        String verificationCode = generateVerificationCode();
+        user.setEmailVerificationCode(verificationCode);
+        user.setEmailVerificationSendTime(new Timestamp(System.currentTimeMillis()));
+        return user;
+    }
+
+    private String generateVerificationCode() {
+        return String.valueOf((int)(Math.random() * 900000) + 100000);
+    }
+
+    private void sendVerificationEmail(User user) {
+        emailService.sendEmail(user.getEmail(), "이메일 인증", "인증 코드: " + user.getEmailVerificationCode());
+    }
+
+    public void verifyEmail(String username, String verificationCode) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("사용자 ID가 존재하지 않습니다."));
+
+        if (user.isEmailVerified()) {
+            throw new EmailAlreadyVerifiedException("이메일이 이미 인증되었습니다.");
+        }
+
+        if (!user.getEmailVerificationCode().equals(verificationCode)) {
+            throw new VerificationCodeMismatchException("인증 코드가 일치하지 않습니다.");
+        }
+
+        Timestamp sentAt = user.getEmailVerificationSendTime();
+        if (sentAt == null || sentAt.before(new Timestamp(System.currentTimeMillis() - 180 * 1000))) {
+            throw new VerificationCodeExpiredException("인증 코드가 만료되었습니다.");
+        }
+
+        user.setEmailVerified(true);
+        user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus())); // 인증 완료 상태
         userRepository.save(user);
     }
 }
