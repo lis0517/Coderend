@@ -1,5 +1,6 @@
 package com.sparta.fifteen.service;
 
+import com.sparta.fifteen.entity.EmailVerification;
 import com.sparta.fifteen.entity.User;
 import com.sparta.fifteen.entity.UserStatusEnum;
 import com.sparta.fifteen.error.EmailAlreadyVerifiedException;
@@ -22,8 +23,9 @@ public class EmailVerificationService {
     }
 
     public void sendVerificationEmail(User user) {
-        emailService.sendEmail(user.getEmail(), "이메일 인증", "인증 코드: " + user.getEmailVerificationCode());
+        emailService.sendEmail(user.getEmail(), "이메일 인증", "인증 코드: " + user.getEmailVerification().getEmailVerificationCode());
     }
+
 
     public String generateVerificationCode() {
         return String.valueOf((int) (Math.random() * 900000) + 100000);
@@ -37,14 +39,17 @@ public class EmailVerificationService {
             throw new EmailAlreadyVerifiedException("이메일이 이미 인증되었습니다.");
         }
 
-        if (!user.getEmailVerificationCode().equals(verificationCode)) {
+        if (!user.getEmailVerification().getEmailVerificationCode().equals(verificationCode)) {
             throw new VerificationCodeMismatchException("인증 코드가 일치하지 않습니다.");
         }
 
-        Timestamp sentAt = user.getEmailVerificationSendTime();
+        Timestamp sentAt = user.getEmailVerification().getEmailVerificationSendTime();
         if (sentAt == null || sentAt.before(new Timestamp(System.currentTimeMillis() - 180 * 1000))) {
             throw new VerificationCodeExpiredException("인증 코드가 만료되었습니다.");
         }
+
+        // 인증 완료 후 이메일 인증 정보만 삭제
+        user.setEmailVerification(null);
 
         user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus()));
         userRepository.save(user);

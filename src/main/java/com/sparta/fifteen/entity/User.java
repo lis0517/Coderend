@@ -54,10 +54,9 @@ public class User {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp modifiedOn;
 
-    // email인증 필드
-    private String emailVerificationCode;
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Timestamp emailVerificationSendTime;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private EmailVerification emailVerification;
+
 
 //    @OneToMany(mappedBy = "user")
 //    private List<NewsFeed> newsFeedList = new ArrayList<>();

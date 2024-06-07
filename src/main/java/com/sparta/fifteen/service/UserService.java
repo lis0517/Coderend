@@ -2,6 +2,7 @@ package com.sparta.fifteen.service;
 
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
+import com.sparta.fifteen.entity.EmailVerification;
 import com.sparta.fifteen.entity.User;
 import com.sparta.fifteen.entity.UserStatusEnum;
 import com.sparta.fifteen.error.PasswordMismatchException;
@@ -52,7 +53,7 @@ public class UserService {
         User user = initializeUser(requestDto);
         userRepository.save(user);
 
-        //emailVerificationService.sendVerificationEmail(user);
+        emailVerificationService.sendVerificationEmail(user);
         return new UserRegisterResponseDto(user);
     }
 
@@ -81,9 +82,13 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         user.setStatusCode(String.valueOf(UserStatusEnum.PENDING.getStatus()));
 
+        // EmailVerification 엔티티 생성 및 설정
+        EmailVerification emailVerification = new EmailVerification();
+        emailVerification.setUser(user);
         String verificationCode = emailVerificationService.generateVerificationCode();
-        user.setEmailVerificationCode(verificationCode);
-        user.setEmailVerificationSendTime(new Timestamp(System.currentTimeMillis()));
+        emailVerification.setEmailVerificationCode(verificationCode);
+        emailVerification.setEmailVerificationSendTime(new Timestamp(System.currentTimeMillis()));
+        user.setEmailVerification(emailVerification); // User 엔티티와의 관계 설정
         return user;
     }
 }
