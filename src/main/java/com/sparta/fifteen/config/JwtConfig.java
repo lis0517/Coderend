@@ -36,13 +36,16 @@ public class JwtConfig {
     public static long staticAccessTokenExpiration; // access token 만료 시간
     public static long staticRefreshTokenExpiration; // refresh token 만료 시간
 
+    public static int staticRefreshTokenExpirationSecond;
+
     @PostConstruct
     public void init(){
         staticSecretKey = SECRET_KEY;
         staticAuthorizationKey = AUTHORIZATION_KEY;
         staticHeader = HEADER_STRING;
         staticTokenPrefix = TOKEN_PREFIX;
-        staticAccessTokenExpiration = ACCESS_TOKEN_EXPIRATION; // test : 1분
-        staticRefreshTokenExpiration = REFRESH_TOKEN_EXPIRATION; // test : 5분
+        staticAccessTokenExpiration = ACCESS_TOKEN_EXPIRATION; // 30분
+        staticRefreshTokenExpiration = REFRESH_TOKEN_EXPIRATION; // 2주
+        staticRefreshTokenExpirationSecond = (int)(REFRESH_TOKEN_EXPIRATION / 1000);
     }
 }

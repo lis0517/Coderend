@@ -2,7 +2,7 @@ package com.sparta.fifteen.entity;
 
 import com.sparta.fifteen.dto.ProfileRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
-import com.sparta.fifteen.dto.UserRegisterResponseDto;
+import com.sparta.fifteen.entity.token.RefreshToken;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -43,7 +43,7 @@ public class User {
     private String email;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private RefreshToken userRefreshToken;
+    private RefreshToken refreshToken;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp statusChangedTime;
@@ -79,7 +79,7 @@ public class User {
         this.name = profileRequestDto.getName();
         this.password = profileRequestDto.getNewPassword();
         this.oneLine = profileRequestDto.getOneline();
-        this.email = profileRequestDto.getEmail();
+
         this.modifiedOn = getModifiedOn();
     }
 }
