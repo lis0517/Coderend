@@ -5,12 +5,16 @@ import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.entity.User;
 import com.sparta.fifteen.entity.UserStatusEnum;
+import com.sparta.fifteen.entity.token.LogoutAccessToken;
 import com.sparta.fifteen.entity.token.RefreshToken;
 import com.sparta.fifteen.repository.UserRepository;
+import com.sparta.fifteen.service.token.LogoutAccessTokenService;
 import com.sparta.fifteen.service.token.RefreshTokenService;
 import com.sparta.fifteen.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -26,10 +30,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
+    private final LogoutAccessTokenService logoutAccessTokenService;
+
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       RefreshTokenService refreshTokenService,
+                       LogoutAccessTokenService logoutAccessTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
+        this.logoutAccessTokenService = logoutAccessTokenService;
     }
 
     public UserRegisterResponseDto registerUser(UserRegisterRequestDto requestDto) {
@@ -73,19 +83,25 @@ public class UserService {
         throw new InputMismatchException("아이디, 패스워드 불일치");
     }
 
-    public void logoutUser(String username) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            System.out.println("User found: " + user.getUsername());
+    public void logoutUser(String token, String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        refreshTokenService.deleteByUser(user);
+
+        logoutAccessTokenService.saveLogoutAccessToken(token, username);
+        //if (optionalUser.isPresent()) {
+        //    User user = optionalUser.get();
+        //    System.out.println("User found: " + user.getUsername());
 
             //user.setUserRefreshToken(null); // todo : 없는 채로 테스트 해보기
-            userRepository.save(user); // 변경사항 저장
+        //    userRepository.save(user); // 변경사항 저장
             // RefreshToken 제거
-            refreshTokenService.deleteByUser(user);
-        } else {
-            System.out.println("User not found");
-        }
+        //    refreshTokenService.deleteByUser(user);
+        //} else {
+        //    System.out.println("User not found");
+        //}
     }
 
     public String refreshToken(HttpServletRequest request){

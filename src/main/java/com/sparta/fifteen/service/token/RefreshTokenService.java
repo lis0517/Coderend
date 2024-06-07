@@ -23,7 +23,7 @@ public class RefreshTokenService {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    public RefreshToken createRefreshToken(User user){
+    private RefreshToken createRefreshToken(User user){
 
         String token = JwtTokenProvider.generateRefreshToken();
 
@@ -32,22 +32,22 @@ public class RefreshTokenService {
         refreshToken.setToken(token);
         refreshToken.setExpirationDate(LocalDateTime.now().plusSeconds(JwtConfig.staticRefreshTokenExpirationSecond));
 
-        log.info("createRefreshToken" + refreshToken.getToken());
+        log.info("createRefreshToken: " + refreshToken.getToken());
 
         return refreshTokenRepository.save(refreshToken);
     }
 
     public RefreshToken updateRefreshToken(User user){
-        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
-                .orElseGet(() -> createRefreshToken(user));
-        log.info("updateRefreshToken" + refreshToken.getToken());
-
-
-        String token = JwtTokenProvider.generateRefreshToken();
-
-        refreshToken.updateRefreshToken(token);
-        refreshToken.updateExpirationDate(LocalDateTime.now().plusSeconds(JwtConfig.staticRefreshTokenExpirationSecond));
-        return refreshTokenRepository.save(refreshToken);
+        if(refreshTokenRepository.existsByUser(user)){
+            RefreshToken refreshToken = refreshTokenRepository.findByUser(user).get();
+            log.info("updateRefreshToken: " + refreshToken.getToken());
+            String token = JwtTokenProvider.generateRefreshToken();
+            refreshToken.updateRefreshToken(token);
+            refreshToken.updateExpirationDate(LocalDateTime.now().plusSeconds(JwtConfig.staticRefreshTokenExpirationSecond));
+            return refreshTokenRepository.save(refreshToken);
+        }else{
+            return createRefreshToken(user);
+        }
     }
 
     public User findUserByToken(String token){
