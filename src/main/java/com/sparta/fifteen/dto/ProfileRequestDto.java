@@ -11,8 +11,6 @@ public class ProfileRequestDto {
     @Pattern(regexp = "^[a-zA-Z0-9]*$")
     private String name;
 
-
-
     private String oneline;
 
     @Size(min = 10)

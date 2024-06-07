@@ -22,22 +22,32 @@ public class ProfileService {
         this.userRepository = userRepository;
     }
 
-    public void updateProfile(User user, ProfileRequestDto profileRequestDto) {
+    @Transactional
+    public void updateProfile(String username, ProfileRequestDto profileRequestDto) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new InputMismatchException("사용자가 없습니다."));
+        System.out.println(profileRequestDto.getName());
+        System.out.println(profileRequestDto.getOneline());
+        System.out.println(profileRequestDto.getNewPassword());
+        System.out.println(profileRequestDto.getCheckNewPassword());
+        System.out.println(profileRequestDto.getCheckNewPassword());
 
-        if(!profileRequestDto.isPasswordMatching()){
-            throw new PasswordExpiredException("새로운 패스워드와 현재 비밀번호가 동일합니다.");
+        if(profileRequestDto.isPasswordMatching()){
+            throw new PasswordExpiredException("New Password equal Current Password");
         }
         if(!profileRequestDto.isNewPasswordMatch()) {
-            throw new PasswordExpiredException("새로운 패스워드와 확인 패스워드가 일치 하지 않습니다.");
+            throw new PasswordExpiredException("New Password not equal Check New Password");
         }
 
         user.updateProfile(profileRequestDto);
+        System.out.println(user.getName());
+        System.out.println(user.getPassword());
+        System.out.println(user.getModifiedOn());
         userRepository.save(user);
     }
 
     @Transactional
-    public  ProfileResponseDto getUserProfile(User user) {
-
+    public  ProfileResponseDto getUserProfile(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new InputMismatchException("사용자가 없습니다."));
 
         return new ProfileResponseDto(user);
     }
