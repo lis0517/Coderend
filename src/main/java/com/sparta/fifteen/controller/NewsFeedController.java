@@ -12,8 +12,12 @@ import java.util.List;
 @RequestMapping("/api")
 public class NewsFeedController {
     private NewsFeedService newsFeedService;
+    public NewsFeedController(NewsFeedService newsFeedService) {
+        this.newsFeedService = newsFeedService;
+    }
+
     @PostMapping("/newsfeed")
-    public NewsFeedResponseDto create(NewsFeedRequestDto newsFeedRequestDto){
+    public NewsFeedResponseDto create(@RequestBody  NewsFeedRequestDto newsFeedRequestDto){
         return newsFeedService.createNewsFeed(newsFeedRequestDto);
     }
 

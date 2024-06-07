@@ -14,7 +14,6 @@ public class Comment extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String comment;
-    @Column(columnDefinition = "bigint default 0")
     private Long likes;
 
     @ManyToOne
@@ -29,6 +28,7 @@ public class Comment extends Timestamped{
         this.comment = comment;
         this.user = user;
         this.newsfeed = newsfeed;
+        this.likes = 0L;
     }
 
     public void update(CommentRequestDto commentRequestDto) {
