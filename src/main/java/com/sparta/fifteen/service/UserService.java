@@ -65,7 +65,7 @@ public class UserService {
 
         // 이메일 발송
         // TODO : 현재 막아둔 상태로 추후 유효성 검사 추가 및 주석 해제
-        // sendVerificationEmail(user);
+        sendVerificationEmail(user);
         return new UserRegisterResponseDto(user);
     }
 
@@ -152,7 +152,7 @@ public class UserService {
         User user = new User(requestDto);
         user.setCreatedOn(new Timestamp(System.currentTimeMillis()));
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus())); // 인증 전 상태
+        user.setStatusCode(String.valueOf(UserStatusEnum.PENDING.getStatus())); // 인증 전 상태
 
         String verificationCode = generateVerificationCode();
         user.setEmailVerificationCode(verificationCode);
