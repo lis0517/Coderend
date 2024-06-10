@@ -41,10 +41,11 @@ public class LikeService {
             Optional<LikeNewsFeed> existingLike = likeNewsFeedRepository.findByNewsFeedAndUser(newsFeed, user);
             if (existingLike.isPresent()) {
                 likeNewsFeedRepository.delete(existingLike.get());
+                newsFeed.updateLikes(1L);
             } else {
                 LikeNewsFeed like = new LikeNewsFeed( user,  newsFeed);
-
                 likeNewsFeedRepository.save(like);
+                newsFeed.updateLikes(1L);
             }
         }else{
             Comment comment = commentRepository.findById(contentId).orElseThrow(() -> new CommentNotFoundException("선택된 댓글은 존재하지 않습니다."));
