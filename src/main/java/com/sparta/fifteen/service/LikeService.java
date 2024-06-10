@@ -39,11 +39,11 @@ public class LikeService {
             if(newsFeed.isEmpty()) {
                 throw new PostNotFoundException("선택된 뉴스피드는 존재하지 않습니다."); // 예외 처리로 수정
             }
-            Optional<LikeNewsFeed> existingLike = likeNewsFeedRepository.findByUserIdAndNewsfeedId(userId, contentId);
+            Optional<LikeNewsFeed> existingLike = likeNewsFeedRepository.findByNewsfeedIdAndUserId(userId, contentId);
             if (existingLike.isPresent()) {
                 likeNewsFeedRepository.delete(existingLike.get());
             } else {
-                LikeNewsFeed like = new LikeNewsFeed( user,  newsFeed.get());
+                LikeNewsFeed like = new LikeNewsFeed( userId,  contentId);
                 likeNewsFeedRepository.save(like);
             }
         }else{

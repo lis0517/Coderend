@@ -7,6 +7,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
+@Table(name = "like_newsfeed")
 @Setter
 @NoArgsConstructor
 public class LikeNewsFeed {
