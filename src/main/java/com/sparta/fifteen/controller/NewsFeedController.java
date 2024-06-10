@@ -9,6 +9,8 @@ import com.sparta.fifteen.service.NewsFeedService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("/api")
 public class NewsFeedController {
@@ -42,6 +44,13 @@ public class NewsFeedController {
     public Page<NewsFeed> getNewsFeedLikes(@RequestParam(value="page", defaultValue = "0") int page,
                                            @RequestParam(value="size", defaultValue = "10") int size){
         return newsFeedService.getNewsFeedByLikes(page, size);
+    }
+
+    @GetMapping("/newsfeed/search")
+    public Page<NewsFeed> searchNewsFeed(@RequestParam(value="page", defaultValue = "0") int page,
+                                         @RequestParam(value="size", defaultValue = "10") int size,
+                                         @RequestBody Date startingDate, @RequestBody Date endingDate){
+        return newsFeedService.searchNewsFeed(page, size, startingDate, endingDate);
     }
 
     @PutMapping("/newsfeed/{newsFeedID}")

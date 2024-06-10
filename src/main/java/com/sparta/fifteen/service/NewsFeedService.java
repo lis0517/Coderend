@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 public class NewsFeedService {
     private final NewsFeedRepository newsFeedRepository;
@@ -59,6 +61,12 @@ public class NewsFeedService {
         Pageable pageable = PageRequest.of(page, size);
         return newsFeedRepository.findAllByOrderByLikes();
     }
+
+    public Page<NewsFeed> searchNewsFeed(int page, int size, Date startingDate, Date endingDate) {
+        Pageable pageable = PageRequest.of(page, size);
+        return newsFeedRepository.findByCreatedAtBetween(startingDate, endingDate, pageable);
+    }
+
     @Transactional
     public NewsFeedResponseDto updateNewsFeed(long newsFeedID, NewsFeedRequestDto newsFeedRequestDto) {
         NewsFeed newsFeed=findNewsFeedById(newsFeedID);
