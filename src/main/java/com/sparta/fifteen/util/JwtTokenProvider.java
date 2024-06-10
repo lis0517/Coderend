@@ -2,7 +2,7 @@ package com.sparta.fifteen.util;
 
 import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.entity.UserRoleEnum;
-import com.sparta.fifteen.entity.token.RefreshToken;
+import com.sparta.fifteen.entity.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

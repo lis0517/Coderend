@@ -1,4 +1,4 @@
-package com.sparta.fifteen.entity.token;
+package com.sparta.fifteen.entity;
 
 import com.sparta.fifteen.entity.User;
 import jakarta.persistence.*;

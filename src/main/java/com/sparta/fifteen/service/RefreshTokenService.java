@@ -1,18 +1,17 @@
-package com.sparta.fifteen.service.token;
+package com.sparta.fifteen.service;
 
 import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.entity.User;
-import com.sparta.fifteen.entity.token.RefreshToken;
+import com.sparta.fifteen.entity.RefreshToken;
 import com.sparta.fifteen.error.ExceptionMessage;
 import com.sparta.fifteen.error.TokenNotFoundException;
-import com.sparta.fifteen.repository.token.RefreshTokenRepository;
+import com.sparta.fifteen.repository.RefreshTokenRepository;
 import com.sparta.fifteen.util.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 @Slf4j

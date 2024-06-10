@@ -2,7 +2,6 @@ package com.sparta.fifteen.entity;
 
 import com.sparta.fifteen.dto.ProfileRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
-import com.sparta.fifteen.entity.token.RefreshToken;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

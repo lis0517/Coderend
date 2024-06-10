@@ -3,20 +3,15 @@ package com.sparta.fifteen.service;
 import com.sparta.fifteen.dto.UserRequestDto;
 import com.sparta.fifteen.entity.User;
 import com.sparta.fifteen.entity.UserStatusEnum;
-import com.sparta.fifteen.entity.token.RefreshToken;
+import com.sparta.fifteen.entity.RefreshToken;
 import com.sparta.fifteen.error.PasswordMismatchException;
-import com.sparta.fifteen.error.UserPendingException;
 import com.sparta.fifteen.error.UserWithdrawnException;
 import com.sparta.fifteen.repository.UserRepository;
-import com.sparta.fifteen.service.token.LogoutAccessTokenService;
-import com.sparta.fifteen.service.token.RefreshTokenService;
 import com.sparta.fifteen.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthenticationService {

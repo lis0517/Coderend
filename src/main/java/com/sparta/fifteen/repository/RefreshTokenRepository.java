@@ -1,6 +1,6 @@
-package com.sparta.fifteen.repository.token;
+package com.sparta.fifteen.repository;
 
-import com.sparta.fifteen.entity.token.RefreshToken;
+import com.sparta.fifteen.entity.RefreshToken;
 import com.sparta.fifteen.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
