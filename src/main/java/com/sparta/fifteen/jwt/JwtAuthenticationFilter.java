@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if(logoutAccessTokenService.existsLogoutAccessToken(authToken)){
+            if( logoutAccessTokenService.existsLogoutAccessToken(authToken)){
                 // 로그아웃된 토큰인 경우 인증 거부
                 log.error("User already logout.");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User already logout.");
@@ -85,7 +85,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
         String authorization = request.getHeader(JwtConfig.staticHeader);
-
         return authorization == null; //  header의 값이 null이면 해당 Filter(토큰 검증)의 동작을 수행하지 않도록 정의
     }
 }
