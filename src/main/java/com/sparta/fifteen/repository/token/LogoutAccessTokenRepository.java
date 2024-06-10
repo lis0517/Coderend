@@ -9,4 +9,6 @@ public interface LogoutAccessTokenRepository extends JpaRepository<LogoutAccessT
     Optional<LogoutAccessToken> findByUsername(String username);
 
     boolean existsByToken(String token);
+
+    void deleteByUsername(String username);
 }

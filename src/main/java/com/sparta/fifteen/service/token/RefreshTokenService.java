@@ -60,6 +60,10 @@ public class RefreshTokenService {
 
     @Transactional
     public void deleteByUser(User user){
-        refreshTokenRepository.deleteByUser(user);
+        RefreshToken refreshToken = user.getRefreshToken();
+        if (refreshToken != null){
+            user.setRefreshToken(null);
+            refreshTokenRepository.delete(refreshToken);
+        }
     }
 }

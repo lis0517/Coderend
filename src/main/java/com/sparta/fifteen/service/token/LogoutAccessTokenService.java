@@ -31,4 +31,8 @@ public class LogoutAccessTokenService {
 
         logoutAccessTokenRepository.save(logoutAccessToken);
     }
+
+    public void deleteByUsername(String username){
+        logoutAccessTokenRepository.deleteByUsername(username);
+    }
 }

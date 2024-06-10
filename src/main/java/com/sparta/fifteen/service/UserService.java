@@ -10,9 +10,11 @@ import com.sparta.fifteen.error.UserAlreadyExistsException;
 import com.sparta.fifteen.error.UserNotFoundException;
 import com.sparta.fifteen.error.UserWithdrawnException;
 import com.sparta.fifteen.repository.UserRepository;
+import com.sparta.fifteen.service.token.LogoutAccessTokenService;
 import com.sparta.fifteen.service.token.RefreshTokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.sql.Timestamp;
@@ -25,15 +27,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final EmailVerificationService emailVerificationService;
+    private final LogoutAccessTokenService logoutAccessTokenService;
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        RefreshTokenService refreshTokenService,
-                       EmailVerificationService emailVerificationService) {
+                       EmailVerificationService emailVerificationService,
+                       LogoutAccessTokenService logoutAccessTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
         this.emailVerificationService = emailVerificationService;
+        this.logoutAccessTokenService = logoutAccessTokenService;
     }
 
     public UserRegisterResponseDto registerUser(UserRegisterRequestDto requestDto) {
@@ -57,6 +62,7 @@ public class UserService {
         return new UserRegisterResponseDto(user);
     }
 
+    @Transactional
     public void withdrawUser(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("사용자 ID가 존재하지 않습니다."));
@@ -74,6 +80,7 @@ public class UserService {
         userRepository.save(user);
 
         refreshTokenService.deleteByUser(user);
+        logoutAccessTokenService.deleteByUsername(username);
     }
 
     private User initializeUser(UserRegisterRequestDto requestDto) {
