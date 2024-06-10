@@ -1,9 +1,8 @@
-package com.sparta.fifteen.service.token;
+package com.sparta.fifteen.service;
 
-import com.sparta.fifteen.entity.token.LogoutAccessToken;
-import com.sparta.fifteen.repository.token.LogoutAccessTokenRepository;
+import com.sparta.fifteen.entity.LogoutAccessToken;
+import com.sparta.fifteen.repository.LogoutAccessTokenRepository;
 import com.sparta.fifteen.util.JwtTokenProvider;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service

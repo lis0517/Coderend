@@ -1,6 +1,6 @@
-package com.sparta.fifteen.repository.token;
+package com.sparta.fifteen.repository;
 
-import com.sparta.fifteen.entity.token.LogoutAccessToken;
+import com.sparta.fifteen.entity.LogoutAccessToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

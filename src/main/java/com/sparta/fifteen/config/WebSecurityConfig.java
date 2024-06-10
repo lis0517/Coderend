@@ -2,7 +2,7 @@ package com.sparta.fifteen.config;
 
 import com.sparta.fifteen.jwt.JwtAuthenticationFilter;
 import com.sparta.fifteen.security.UserDetailsServiceImpl;
-import com.sparta.fifteen.service.token.LogoutAccessTokenService;
+import com.sparta.fifteen.service.LogoutAccessTokenService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -10,8 +10,6 @@ import com.sparta.fifteen.error.UserAlreadyExistsException;
 import com.sparta.fifteen.error.UserNotFoundException;
 import com.sparta.fifteen.error.UserWithdrawnException;
 import com.sparta.fifteen.repository.UserRepository;
-import com.sparta.fifteen.service.token.LogoutAccessTokenService;
-import com.sparta.fifteen.service.token.RefreshTokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

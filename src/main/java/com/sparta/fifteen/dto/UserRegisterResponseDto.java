@@ -1,6 +1,6 @@
 package com.sparta.fifteen.dto;
 
-import com.sparta.fifteen.entity.token.RefreshToken;
+import com.sparta.fifteen.entity.RefreshToken;
 import com.sparta.fifteen.entity.User;
 import lombok.Getter;
 

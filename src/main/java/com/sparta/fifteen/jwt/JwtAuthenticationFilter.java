@@ -2,7 +2,7 @@ package com.sparta.fifteen.jwt;
 
 import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.security.UserDetailsServiceImpl;
-import com.sparta.fifteen.service.token.LogoutAccessTokenService;
+import com.sparta.fifteen.service.LogoutAccessTokenService;
 import com.sparta.fifteen.util.JwtTokenProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
