@@ -5,6 +5,7 @@ import com.sparta.fifteen.entity.User;
 import com.sparta.fifteen.entity.UserStatusEnum;
 import com.sparta.fifteen.entity.token.RefreshToken;
 import com.sparta.fifteen.error.PasswordMismatchException;
+import com.sparta.fifteen.error.UserPendingException;
 import com.sparta.fifteen.error.UserWithdrawnException;
 import com.sparta.fifteen.repository.UserRepository;
 import com.sparta.fifteen.service.token.LogoutAccessTokenService;
@@ -35,25 +36,31 @@ public class AuthenticationService {
     }
 
     public String loginUser(UserRequestDto requestDto) {
-        Optional<User> optionalUser = userRepository.findByUsername(requestDto.getUsername());
+        User user = userRepository.findByUsername(requestDto.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
 
-        if (optionalUser.isPresent()) {
-            User registeredUser = optionalUser.get();
-            if (registeredUser.getStatusCode().equals(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()))) {
-                throw new UserWithdrawnException("탈퇴한 계정");
-            }
-
-            if (passwordEncoder.matches(requestDto.getPassword(), registeredUser.getPassword())) {
-                String accessToken = JwtTokenProvider.generateAccessToken(requestDto.getUsername());
-                RefreshToken refreshToken = refreshTokenService.updateRefreshToken(registeredUser);
-
-                userRepository.save(registeredUser);
-                JwtTokenProvider.setRefreshTokenAtCookie(refreshToken);
-
-                return accessToken;
-            }
+        if (user.getStatusCode().equals(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()))) {
+            throw new UserWithdrawnException("탈퇴한 계정입니다.");
         }
-        throw new PasswordMismatchException("아이디, 패스워드 불일치");
+
+//        if (user.getStatusCode().equals(String.valueOf(UserStatusEnum.PENDING.getStatus()))) {
+//            throw new UserPendingException("인증 대기 상태입니다. 이메일 인증을 해주세요.");
+//        }
+
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            throw new PasswordMismatchException("패스워드가 일치하지 않습니다.");
+        }
+
+        if (passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            String accessToken = JwtTokenProvider.generateAccessToken(requestDto.getUsername());
+            RefreshToken refreshToken = refreshTokenService.updateRefreshToken(user);
+
+            userRepository.save(user);
+            JwtTokenProvider.setRefreshTokenAtCookie(refreshToken);
+
+            return accessToken;
+        }
+        return null;
     }
 
     public void logoutUser(String token, String username) {
