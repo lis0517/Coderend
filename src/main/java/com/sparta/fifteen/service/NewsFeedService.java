@@ -54,12 +54,12 @@ public class NewsFeedService {
 
     public Page<NewsFeed> getNewsFeedByDate(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return newsFeedRepository.findAllByOrderByCreatedAtDesc();
+        return newsFeedRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
     public Page<NewsFeed> getNewsFeedByLikes(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return newsFeedRepository.findAllByOrderByLikes();
+        return newsFeedRepository.findAllByOrderByLikes(pageable);
     }
 
     public Page<NewsFeed> searchNewsFeed(int page, int size, Date startingDate, Date endingDate) {

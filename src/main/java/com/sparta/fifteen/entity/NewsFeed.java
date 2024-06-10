@@ -18,6 +18,8 @@ public class NewsFeed extends Timestamped{
     private long authorId;
     @Column(nullable = false)
     private String content;
+    @Column(nullable = false)
+    private Long likes;
     public NewsFeed(NewsFeedRequestDto newsFeedRequestDto){
         this.authorId = newsFeedRequestDto.getAuthorId();
         this.content = newsFeedRequestDto.getContent();
