@@ -1,6 +1,7 @@
 package com.sparta.fifteen.service;
 
 import com.sparta.fifteen.entity.*;
+import com.sparta.fifteen.error.CommentNotFoundException;
 import com.sparta.fifteen.error.PostNotFoundException;
 import com.sparta.fifteen.error.SelfPostLikeException;
 import com.sparta.fifteen.repository.*;
@@ -35,29 +36,28 @@ public class LikeService {
         //자기가 만든거 일 때는 종료/예외처리
         if(contentType == ContentTypeEnum.NEWSFEED_TYPE) {
 
-            Optional<NewsFeed> newsFeed = newsFeedRepository.findById(contentId);
-            if(newsFeed.isEmpty()) {
-                throw new PostNotFoundException("선택된 뉴스피드는 존재하지 않습니다."); // 예외 처리로 수정
-            }
-            Optional<LikeNewsFeed> existingLike = likeNewsFeedRepository.findByNewsfeedIdAndUserId(userId, contentId);
+            NewsFeed newsFeed = newsFeedRepository.findById(contentId).orElseThrow(() -> new PostNotFoundException("선택된 뉴스피드는 존재하지 않습니다."));
+
+            Optional<LikeNewsFeed> existingLike = likeNewsFeedRepository.findByNewsFeedAndUser(newsFeed, user);
             if (existingLike.isPresent()) {
                 likeNewsFeedRepository.delete(existingLike.get());
             } else {
-                LikeNewsFeed like = new LikeNewsFeed( userId,  contentId);
+                LikeNewsFeed like = new LikeNewsFeed( user,  newsFeed);
+
                 likeNewsFeedRepository.save(like);
             }
         }else{
-            Optional<Comment> comment = commentRepository.findById(contentId);
-            if(comment.isEmpty()) {
-                throw new PostNotFoundException("선택된 댓글은 존재하지 않습니다."); // 예외 처리로 수정
-            }
+            Comment comment = commentRepository.findById(contentId).orElseThrow(() -> new CommentNotFoundException("선택된 댓글은 존재하지 않습니다."));
+
 
             Optional<LikeComment> existingLike = likeCommentRepository.findByUserIdAndCommentId(userId, contentId);
             if (existingLike.isPresent()) {
                 likeCommentRepository.delete(existingLike.get());
+                comment.updatelikes(-1L);
             } else {
-                LikeComment like = new LikeComment( userId,  contentId);
+                LikeComment like = new LikeComment( user,  comment);
                 likeCommentRepository.save(like);
+                comment.updatelikes(1L);
             }
         }
 

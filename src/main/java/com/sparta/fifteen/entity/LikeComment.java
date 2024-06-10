@@ -19,15 +19,17 @@ public class LikeComment extends Timestamped {
     private Long id;
 
 
-    @Column(nullable = false)
-    private long userId;
+    @ManyToOne
+    @JoinColumn(name = "users_id", nullable = false)
+    private User user;
 
-    @Column(nullable = false)
-    private long commentId;
+    @ManyToOne
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Comment comment;
 
-    public LikeComment(long userId, long commentId) {
-        this.userId = userId;
-        this.commentId = commentId;
+    public LikeComment(User user, Comment comment) {
+        this.user = user;
+        this.comment = comment;
     }
 }
 
