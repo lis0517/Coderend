@@ -1,7 +1,9 @@
 package com.sparta.fifteen.dto;
 
 import com.sparta.fifteen.entity.User;
+import lombok.Getter;
 
+@Getter
 public class ProfileResponseDto {
     private String username;
     private String name;
