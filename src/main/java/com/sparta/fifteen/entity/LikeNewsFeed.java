@@ -16,14 +16,16 @@ public class LikeNewsFeed {
     @Column(name = "likeN_id")
     private Long id;
 
-    @Column(nullable = false)
-    private long userId;
+    @ManyToOne
+    @JoinColumn(name = "users_id", nullable = false)
+    private User user;
 
-    @Column(nullable = false)
-    private long newsfeedId;
+    @ManyToOne
+    @JoinColumn(name = "newsfeed_id", nullable = false)
+    private NewsFeed newsFeed;
 
-    public LikeNewsFeed(long userId, long newsfeedId) {
-        this.userId = userId;
-        this.newsfeedId = newsfeedId;
+    public LikeNewsFeed(User user, NewsFeed newsFeed) {
+        this.user = user;
+        this.newsFeed = newsFeed;
     }
 }

@@ -1,6 +1,8 @@
 package com.sparta.fifteen.repository;
 
 import com.sparta.fifteen.entity.LikeNewsFeed;
+import com.sparta.fifteen.entity.NewsFeed;
+import com.sparta.fifteen.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +12,5 @@ import java.util.Optional;
 public interface LikeNewsFeedRepository extends JpaRepository<LikeNewsFeed,Long> {
 
 
-    Optional<LikeNewsFeed> findByNewsfeedIdAndUserId(Long newsFeedId, Long userId);
+    Optional<LikeNewsFeed> findByNewsFeedAndUser(NewsFeed newsFeed, User user);
 }
