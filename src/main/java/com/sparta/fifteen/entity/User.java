@@ -84,6 +84,6 @@ public class User {
         this.password = profileRequestDto.getNewPassword();
         this.oneLine = profileRequestDto.getOneline();
 
-        this.modifiedOn = getModifiedOn();
+        this.modifiedOn =  new Timestamp(System.currentTimeMillis());
     }
 }
