@@ -14,11 +14,13 @@ public class NewsFeed extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @JoinColumn(name = "user_id")
     private long authorId;
+
     @Column(nullable = false)
     private String content;
-    @Column(nullable = false)
+
     private Long likes;
     public NewsFeed(NewsFeedRequestDto newsFeedRequestDto){
         this.authorId = newsFeedRequestDto.getAuthorId();
@@ -32,5 +34,10 @@ public class NewsFeed extends Timestamped{
     public NewsFeed() {
         this.authorId=1;
         this.content = "";
+        this.likes=0L;
+    }
+
+    public void updateLikes(long l) {
+        this.likes += l;
     }
 }
