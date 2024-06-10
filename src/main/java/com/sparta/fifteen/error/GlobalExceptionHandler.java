@@ -58,4 +58,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUserMismatchException(UserMismatchException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
+
+    @ExceptionHandler(UserPendingException.class)
+    public ResponseEntity<String> handleUserPendingException(UserAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
 }

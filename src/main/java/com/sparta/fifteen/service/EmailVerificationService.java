@@ -45,7 +45,8 @@ public class EmailVerificationService {
 
         Timestamp sentAt = user.getEmailVerification().getEmailVerificationSendTime();
         if (sentAt == null || sentAt.before(new Timestamp(System.currentTimeMillis() - 180 * 1000))) {
-            throw new VerificationCodeExpiredException("인증 코드가 만료되었습니다.");
+            resendVerificationEmail(user);
+            throw new VerificationCodeExpiredException("인증 코드가 만료되었습니다. 새로운 인증 코드를 입력해주세요.");
         }
 
         // 인증 완료 후 이메일 인증 정보만 삭제
@@ -53,5 +54,18 @@ public class EmailVerificationService {
 
         user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus()));
         userRepository.save(user);
+    }
+
+    public void resendVerificationEmail(User user) {
+        // 새로운 인증 코드 생성 및 설정
+        String newVerificationCode = generateVerificationCode();
+        user.getEmailVerification().setEmailVerificationCode(newVerificationCode);
+        user.getEmailVerification().setEmailVerificationSendTime(new Timestamp(System.currentTimeMillis()));
+
+        // 사용자 저장
+        userRepository.save(user);
+
+        // 인증 이메일 재전송
+        sendVerificationEmail(user);
     }
 }

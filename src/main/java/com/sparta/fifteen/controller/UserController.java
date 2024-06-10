@@ -4,12 +4,16 @@ import com.sparta.fifteen.config.JwtConfig;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import com.sparta.fifteen.dto.UserRegisterResponseDto;
 import com.sparta.fifteen.dto.UserRequestDto;
+import com.sparta.fifteen.error.PasswordMismatchException;
+import com.sparta.fifteen.error.UserPendingException;
+import com.sparta.fifteen.error.UserWithdrawnException;
 import com.sparta.fifteen.service.AuthenticationService;
 import com.sparta.fifteen.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.InputMismatchException;
@@ -43,10 +47,19 @@ public class UserController {
         try {
             String token = authenticationService.loginUser(requestDto);
             return ResponseEntity.ok().header(JwtConfig.staticHeader, JwtConfig.staticTokenPrefix + token).body(token);
-        } catch (InputMismatchException e) {
-            return ResponseEntity.badRequest().body("아이디 또는 비밀번호를 확인해주세요. 로그인에 실패하셨습니다.");
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 사용자입니다.");
+        } catch (UserWithdrawnException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("탈퇴한 계정입니다.");
+        } catch (UserPendingException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 대기 상태입니다. 이메일 인증을 해주세요.");
+        } catch (PasswordMismatchException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("패스워드가 일치하지 않습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
         }
     }
+
 
     @PostMapping("/user/logout")
     private ResponseEntity<?> userLogout(@RequestHeader("Authorization") String authorizationHeader) {
