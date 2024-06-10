@@ -4,8 +4,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ProfileRequestDto {
     @Size(min = 10, max = 20)
     @Pattern(regexp = "^[a-zA-Z0-9]*$")
@@ -26,10 +28,12 @@ public class ProfileRequestDto {
     private String checkNewPassword;
 
     public boolean isNewPasswordMatch() {
+
         return this.checkNewPassword.equals(this.newPassword);
     }
 
     public boolean isPasswordMatching() {
+
         return this.newPassword.equals(this.currentPassword);
     }
 }

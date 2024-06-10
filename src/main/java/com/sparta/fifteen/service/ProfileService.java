@@ -1,12 +1,11 @@
 package com.sparta.fifteen.service;
 
-import com.mysql.cj.exceptions.PasswordExpiredException;
 import com.sparta.fifteen.dto.ProfileRequestDto;
 import com.sparta.fifteen.dto.ProfileResponseDto;
 import com.sparta.fifteen.entity.User;
-
+import com.sparta.fifteen.error.PasswordMismatchException;
 import com.sparta.fifteen.repository.UserRepository;
-import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,33 +14,37 @@ import java.util.InputMismatchException;
 @Service
 public class ProfileService {
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public ProfileService(UserRepository userRepository) {
+    public ProfileService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
 
     @Transactional
     public void updateProfile(String username, ProfileRequestDto profileRequestDto) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new InputMismatchException("사용자가 없습니다."));
-        System.out.println(profileRequestDto.getName());
-        System.out.println(profileRequestDto.getOneline());
-        System.out.println(profileRequestDto.getNewPassword());
-        System.out.println(profileRequestDto.getCheckNewPassword());
-        System.out.println(profileRequestDto.getCheckNewPassword());
+
 
         if(profileRequestDto.isPasswordMatching()){
-            throw new PasswordExpiredException("New Password equal Current Password");
-        }
-        if(!profileRequestDto.isNewPasswordMatch()) {
-            throw new PasswordExpiredException("New Password not equal Check New Password");
+
+
+            throw new PasswordMismatchException("New Password equal Current Password");
         }
 
+
+        if(!profileRequestDto.isNewPasswordMatch()) {
+
+            throw new PasswordMismatchException("New Password not equal Check New Password");
+        }
+
+
         user.updateProfile(profileRequestDto);
-        System.out.println(user.getName());
-        System.out.println(user.getPassword());
-        System.out.println(user.getModifiedOn());
+
+        user.setPassword(passwordEncoder.encode(profileRequestDto.getNewPassword()));
+
         userRepository.save(user);
     }
 

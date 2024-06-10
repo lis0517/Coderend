@@ -18,7 +18,9 @@ import org.webjars.NotFoundException;
 @Validated
 public class ProfileController {
 
-    ProfileService profileService;
+    private final ProfileService profileService;
+
+
 
     public ProfileController(ProfileService profileService) {
         this.profileService = profileService;
@@ -37,6 +39,7 @@ public class ProfileController {
 
             profileService.updateProfile(username, ProfileRequestDto);
 
+
             return ResponseEntity.ok().body("프로필 수정에 성공하였습니다.");
 
         } catch (NotFoundException e) {
@@ -45,14 +48,16 @@ public class ProfileController {
         } catch (AccessDeniedException e ) {
             headers.add("Message", "인증되지 않은 사용자입니다.");
             return new ResponseEntity<>(null, headers, HttpStatus.UNAUTHORIZED); // 인증되지 않은 경우에는 UNAUTHORIZED(401) 상태를 반환합니다.
-        } catch (Exception e) {
-            headers.add("Message", "프로필 수정 중에 오류가 발생했습니다.");
-            return new ResponseEntity<>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR); // 예외가 발생했을 때는 INTERNAL_SERVER_ERROR(500) 상태를 반환합니다.
+        } catch (RuntimeException e) {
+            String errorMessage = "Profile Error: " + e.getMessage();
+            headers.add("Message", errorMessage);
+            return ResponseEntity.internalServerError().body(errorMessage);
         }
 
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/p" +
+            "rofile")
     public ResponseEntity<ProfileResponseDto> getProfile(@RequestHeader("Authorization") String authorizationHeader) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -78,7 +83,7 @@ public class ProfileController {
             headers.add("Message", "인증되지 않은 사용자입니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(headers).build();
         } catch (RuntimeException e) {
-            String errorMessage = "프로필 조회 중에 오류가 발생했습니다: " + e.getMessage();
+            String errorMessage = "Profile Error: " + e.getMessage();
             headers.add("Message", errorMessage);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).build();
         }
