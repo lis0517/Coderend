@@ -6,9 +6,10 @@ import com.sparta.fifteen.dto.NewsFeedResponseDto;
 import com.sparta.fifteen.entity.NewsFeed;
 import com.sparta.fifteen.error.NewsFeedCreateErrorException;
 import com.sparta.fifteen.service.NewsFeedService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api")
@@ -28,8 +29,28 @@ public class NewsFeedController {
     }
 
     @GetMapping("/newsfeed")
-    public List<NewsFeedResponseDto> getNewsFeed(){
-        return newsFeedService.getAllNewsFeed();
+    public Page<NewsFeed> getNewsFeed(@RequestParam(value = "page", defaultValue = "0") int page,
+                                      @RequestParam(value = "size", defaultValue = "10") int size){
+        return newsFeedService.getAllNewsFeed(page, size);
+    }
+
+    @GetMapping("/newsfeed/newest")
+    public Page<NewsFeed> getNewsFeedByDate(@RequestParam(value="page", defaultValue = "0") int page,
+                                            @RequestParam(value="size", defaultValue = "10") int size){
+        return newsFeedService.getNewsFeedByDate(page, size);
+    }
+
+    @GetMapping("/newsfeed/likes")
+    public Page<NewsFeed> getNewsFeedLikes(@RequestParam(value="page", defaultValue = "0") int page,
+                                           @RequestParam(value="size", defaultValue = "10") int size){
+        return newsFeedService.getNewsFeedByLikes(page, size);
+    }
+
+    @GetMapping("/newsfeed/search")
+    public Page<NewsFeed> searchNewsFeed(@RequestParam(value="page", defaultValue = "0") int page,
+                                         @RequestParam(value="size", defaultValue = "10") int size,
+                                         @RequestBody Date startingDate, @RequestBody Date endingDate){
+        return newsFeedService.searchNewsFeed(page, size, startingDate, endingDate);
     }
 
     @PutMapping("/newsfeed/{newsFeedID}")

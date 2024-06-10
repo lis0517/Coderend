@@ -7,13 +7,15 @@ import com.sparta.fifteen.repository.CommentRepository;
 import com.sparta.fifteen.repository.NewsFeedRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 @Service
 public class NewsFeedService {
@@ -45,8 +47,24 @@ public class NewsFeedService {
         return newsFeedResponseDto;
     }
 
-    public List<NewsFeedResponseDto> getAllNewsFeed() {
-        return newsFeedRepository.findAllByOrderByCreatedAtDesc().stream().map(NewsFeedResponseDto::new).toList();
+    public Page<NewsFeed> getAllNewsFeed(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return newsFeedRepository.findAll(pageable);
+    }
+
+    public Page<NewsFeed> getNewsFeedByDate(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return newsFeedRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public Page<NewsFeed> getNewsFeedByLikes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return newsFeedRepository.findAllByOrderByLikes();
+    }
+
+    public Page<NewsFeed> searchNewsFeed(int page, int size, Date startingDate, Date endingDate) {
+        Pageable pageable = PageRequest.of(page, size);
+        return newsFeedRepository.findByCreatedAtBetween(startingDate, endingDate, pageable);
     }
 
     @Transactional
