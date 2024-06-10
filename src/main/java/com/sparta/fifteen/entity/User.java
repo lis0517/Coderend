@@ -54,6 +54,10 @@ public class User {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp modifiedOn;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private EmailVerification emailVerification;
+
+
 //    @OneToMany(mappedBy = "user")
 //    private List<NewsFeed> newsFeedList = new ArrayList<>();
 //
@@ -80,6 +84,6 @@ public class User {
         this.password = profileRequestDto.getNewPassword();
         this.oneLine = profileRequestDto.getOneline();
 
-        this.modifiedOn = getModifiedOn();
+        this.modifiedOn =  new Timestamp(System.currentTimeMillis());
     }
 }
