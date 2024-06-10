@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LikeComment extends Timestamped{
+public class LikeComment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,16 +18,16 @@ public class LikeComment extends Timestamped{
     private Long id;
 
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(nullable = false)
+    private long userId;
 
-    @ManyToOne
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
+    @Column(nullable = false)
+    private long commentId;
 
-    public LikeComment(User user, Comment comment) {
-        this.user = user;
-        this.comment = comment;
+    public LikeComment(long userId, long commentId) {
+        this.userId = userId;
+        this.commentId = commentId;
     }
 }
+
+

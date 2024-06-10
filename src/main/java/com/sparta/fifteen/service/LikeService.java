@@ -28,10 +28,12 @@ public class LikeService {
     public void likeOrUnlike(User user, Long contentId, ContentTypeEnum contentType) {
 
         Long userId = user.getId();
+        System.out.println(2);
 
         if(checkOwnContent(userId, contentId, contentType)) {
             throw new SelfPostLikeException("작성자가 좋아요를 할 수 없습니다.");
         }
+        System.out.println(3);
         //자기가 만든거 일 때는 종료/예외처리
         if(contentType == ContentTypeEnum.NEWSFEED_TYPE) {
 
@@ -43,7 +45,7 @@ public class LikeService {
             if (existingLike.isPresent()) {
                 likeNewsFeedRepository.delete(existingLike.get());
             } else {
-                LikeNewsFeed like = new LikeNewsFeed( user,  newsFeed.get());
+                LikeNewsFeed like = new LikeNewsFeed( userId,  contentId);
                 likeNewsFeedRepository.save(like);
             }
         }else{
@@ -56,7 +58,7 @@ public class LikeService {
             if (existingLike.isPresent()) {
                 likeCommentRepository.delete(existingLike.get());
             } else {
-                LikeComment like = new LikeComment( user,  comment.get());
+                LikeComment like = new LikeComment( userId,  contentId);
                 likeCommentRepository.save(like);
             }
         }
