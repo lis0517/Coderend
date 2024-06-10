@@ -40,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader(JwtConfig.staticHeader);
         log.info(header);
         String username = null;
+
         String authToken = null;
 
         if (header != null && header.startsWith(JwtConfig.staticTokenPrefix)){

@@ -58,4 +58,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUserMismatchException(UserMismatchException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
+
+    @ExceptionHandler(NewsFeedCreateErrorException.class)
+    public ResponseEntity<String> handleNewsFeedCreateErrorException(NewsFeedCreateErrorException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NewsFeedViewErrorException.class)
+    public ResponseEntity<String> handleNewsFeedViewErrorException(NewsFeedViewErrorException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
