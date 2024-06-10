@@ -32,6 +32,18 @@ public class NewsFeedController {
         return newsFeedService.getAllNewsFeed(page, size);
     }
 
+    @GetMapping("/newsfeed/newest")
+    public Page<NewsFeed> getNewsFeedByDate(@RequestParam(value="page", defaultValue = "0") int page,
+                                            @RequestParam(value="size", defaultValue = "10") int size){
+        return newsFeedService.getNewsFeedByDate(page, size);
+    }
+
+    @GetMapping("/newsfeed/likes")
+    public Page<NewsFeed> getNewsFeedLikes(@RequestParam(value="page", defaultValue = "0") int page,
+                                           @RequestParam(value="size", defaultValue = "10") int size){
+        return newsFeedService.getNewsFeedByLikes(page, size);
+    }
+
     @PutMapping("/newsfeed/{newsFeedID}")
     public NewsFeedResponseDto updateNewsFeed(@PathVariable long newsFeedID, @RequestBody NewsFeedRequestDto newsFeedRequestDto){
         return newsFeedService.updateNewsFeed(newsFeedID, newsFeedRequestDto);

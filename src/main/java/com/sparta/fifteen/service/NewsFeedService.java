@@ -50,6 +50,15 @@ public class NewsFeedService {
         return newsFeedRepository.findAll(pageable);
     }
 
+    public Page<NewsFeed> getNewsFeedByDate(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return newsFeedRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public Page<NewsFeed> getNewsFeedByLikes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return newsFeedRepository.findAllByOrderByLikes();
+    }
     @Transactional
     public NewsFeedResponseDto updateNewsFeed(long newsFeedID, NewsFeedRequestDto newsFeedRequestDto) {
         NewsFeed newsFeed=findNewsFeedById(newsFeedID);
