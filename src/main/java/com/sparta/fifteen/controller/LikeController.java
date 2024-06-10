@@ -27,6 +27,7 @@ public class LikeController {
 
         try {
             User user = userDetails.getUser();
+
             likeService.likeOrUnlike(user, newsfeedId, ContentTypeEnum.NEWSFEED_TYPE);
             return new ResponseEntity<>("좋아요 토글 성공", HttpStatus.OK);
 

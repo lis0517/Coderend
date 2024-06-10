@@ -7,6 +7,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
+@Table(name = "like_newsfeed")
 @Setter
 @NoArgsConstructor
 public class LikeNewsFeed {
@@ -16,15 +17,15 @@ public class LikeNewsFeed {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "users_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "newsfeed_id")
-    private NewsFeed newsfeed;
+    @JoinColumn(name = "newsfeed_id", nullable = false)
+    private NewsFeed newsFeed;
 
-    public LikeNewsFeed(User user, NewsFeed newsfeed) {
+    public LikeNewsFeed(User user, NewsFeed newsFeed) {
         this.user = user;
-        this.newsfeed = newsfeed;
+        this.newsFeed = newsFeed;
     }
 }

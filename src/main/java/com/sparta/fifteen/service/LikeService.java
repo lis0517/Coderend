@@ -6,7 +6,6 @@ import com.sparta.fifteen.error.PostNotFoundException;
 import com.sparta.fifteen.error.SelfPostLikeException;
 import com.sparta.fifteen.repository.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +26,6 @@ public class LikeService {
         this.newsFeedRepository = newsFeedRepository;
     }
 
-    @Transactional
     public void likeOrUnlike(User user, Long contentId, ContentTypeEnum contentType) {
 
         Long userId = user.getId();
@@ -38,19 +36,19 @@ public class LikeService {
         //자기가 만든거 일 때는 종료/예외처리
         if(contentType == ContentTypeEnum.NEWSFEED_TYPE) {
 
-            Optional<NewsFeed> newsFeed = newsFeedRepository.findById(contentId);
-            if(newsFeed.isEmpty()) {
-                throw new PostNotFoundException("선택된 뉴스피드는 존재하지 않습니다."); // 예외 처리로 수정
-            }
-            Optional<LikeNewsFeed> existingLike = likeNewsFeedRepository.findByUserIdAndNewsfeedId(userId, contentId);
+            NewsFeed newsFeed = newsFeedRepository.findById(contentId).orElseThrow(() -> new PostNotFoundException("선택된 뉴스피드는 존재하지 않습니다."));
+
+            Optional<LikeNewsFeed> existingLike = likeNewsFeedRepository.findByNewsFeedAndUser(newsFeed, user);
             if (existingLike.isPresent()) {
                 likeNewsFeedRepository.delete(existingLike.get());
             } else {
-                LikeNewsFeed like = new LikeNewsFeed( user,  newsFeed.get());
+                LikeNewsFeed like = new LikeNewsFeed( user,  newsFeed);
+
                 likeNewsFeedRepository.save(like);
             }
         }else{
             Comment comment = commentRepository.findById(contentId).orElseThrow(() -> new CommentNotFoundException("선택된 댓글은 존재하지 않습니다."));
+
 
             Optional<LikeComment> existingLike = likeCommentRepository.findByUserIdAndCommentId(userId, contentId);
             if (existingLike.isPresent()) {

@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "like_comment")
 @Getter
 @Setter
 @NoArgsConstructor
-public class LikeComment extends Timestamped{
+public class LikeComment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,11 +20,11 @@ public class LikeComment extends Timestamped{
 
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "users_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
     public LikeComment(User user, Comment comment) {
@@ -31,3 +32,5 @@ public class LikeComment extends Timestamped{
         this.comment = comment;
     }
 }
+
+
