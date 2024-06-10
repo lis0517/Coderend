@@ -6,6 +6,7 @@ import com.sparta.fifteen.error.PostNotFoundException;
 import com.sparta.fifteen.error.SelfPostLikeException;
 import com.sparta.fifteen.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -25,7 +26,7 @@ public class LikeService {
         this.commentRepository = commentRepository;
         this.newsFeedRepository = newsFeedRepository;
     }
-
+    @Transactional
     public void likeOrUnlike(User user, Long contentId, ContentTypeEnum contentType) {
 
         Long userId = user.getId();

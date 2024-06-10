@@ -11,6 +11,6 @@ import java.util.Date;
 @Repository
 public interface NewsFeedRepository extends JpaRepository<NewsFeed, Long> {
     Page<NewsFeed> findAllByOrderByCreatedAtDesc(Pageable pageable);
-    Page<NewsFeed> findAllByOrderByLikes(Pageable pageable);
+    Page<NewsFeed> findAllByOrderByLikesDesc(Pageable pageable);
     Page<NewsFeed> findByCreatedAtBetween(Date startDate, Date endDate, Pageable pageable);
 }
