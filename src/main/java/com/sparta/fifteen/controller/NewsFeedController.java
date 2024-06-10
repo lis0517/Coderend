@@ -6,9 +6,8 @@ import com.sparta.fifteen.dto.NewsFeedResponseDto;
 import com.sparta.fifteen.entity.NewsFeed;
 import com.sparta.fifteen.error.NewsFeedCreateErrorException;
 import com.sparta.fifteen.service.NewsFeedService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -28,8 +27,9 @@ public class NewsFeedController {
     }
 
     @GetMapping("/newsfeed")
-    public List<NewsFeedResponseDto> getNewsFeed(){
-        return newsFeedService.getAllNewsFeed();
+    public Page<NewsFeed> getNewsFeed(@RequestParam(value = "page", defaultValue = "0") int page,
+                                      @RequestParam(value = "size", defaultValue = "10") int size){
+        return newsFeedService.getAllNewsFeed(page, size);
     }
 
     @PutMapping("/newsfeed/{newsFeedID}")
