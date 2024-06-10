@@ -53,7 +53,7 @@ public class UserService {
         User user = initializeUser(requestDto);
         userRepository.save(user);
 
-        emailVerificationService.sendVerificationEmail(user);
+//        emailVerificationService.sendVerificationEmail(user);
         return new UserRegisterResponseDto(user);
     }
 
