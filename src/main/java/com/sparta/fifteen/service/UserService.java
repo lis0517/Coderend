@@ -91,4 +91,8 @@ public class UserService {
         user.setEmailVerification(emailVerification); // User 엔티티와의 관계 설정
         return user;
     }
+
+    public long getUserIdByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("사용자가 존재하지 않습니다.")).getId();
+    }
 }

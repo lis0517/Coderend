@@ -3,6 +3,8 @@ package com.sparta.fifteen.controller;
 
 import com.sparta.fifteen.dto.NewsFeedRequestDto;
 import com.sparta.fifteen.dto.NewsFeedResponseDto;
+import com.sparta.fifteen.entity.NewsFeed;
+import com.sparta.fifteen.error.NewsFeedCreateErrorException;
 import com.sparta.fifteen.service.NewsFeedService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +17,8 @@ public class NewsFeedController {
     public NewsFeedController(NewsFeedService newsFeedService) {
         this.newsFeedService = newsFeedService;
     }
-
     @PostMapping("/newsfeed")
-    public NewsFeedResponseDto create(@RequestBody  NewsFeedRequestDto newsFeedRequestDto){
+    public NewsFeed create(@RequestBody NewsFeedRequestDto newsFeedRequestDto) throws NewsFeedCreateErrorException {
         return newsFeedService.createNewsFeed(newsFeedRequestDto);
     }
 
@@ -32,12 +33,12 @@ public class NewsFeedController {
     }
 
     @PutMapping("/newsfeed/{newsFeedID}")
-    public NewsFeedResponseDto updateNewsFeed(@PathVariable long newsFeedID, NewsFeedRequestDto newsFeedRequestDto){
+    public NewsFeedResponseDto updateNewsFeed(@PathVariable long newsFeedID, @RequestBody NewsFeedRequestDto newsFeedRequestDto){
         return newsFeedService.updateNewsFeed(newsFeedID, newsFeedRequestDto);
     }
 
     @DeleteMapping("/newsfeed/{newsFeedID}")
-    public long deleteNewsFeed(@PathVariable long newsFeedID){
+    public String deleteNewsFeed(@PathVariable long newsFeedID){
         return newsFeedService.deleteNewsFeed(newsFeedID);
     }
 }

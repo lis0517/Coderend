@@ -14,7 +14,7 @@ public class NewsFeed extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(nullable = false)
+    @JoinColumn(name = "user_id")
     private long authorId;
     @Column(nullable = false)
     private String content;

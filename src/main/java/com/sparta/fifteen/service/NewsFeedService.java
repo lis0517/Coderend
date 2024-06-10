@@ -3,8 +3,14 @@ package com.sparta.fifteen.service;
 import com.sparta.fifteen.dto.NewsFeedRequestDto;
 import com.sparta.fifteen.dto.NewsFeedResponseDto;
 import com.sparta.fifteen.entity.NewsFeed;
+import com.sparta.fifteen.repository.CommentRepository;
 import com.sparta.fifteen.repository.NewsFeedRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,16 +18,25 @@ import java.util.List;
 @Service
 public class NewsFeedService {
     private final NewsFeedRepository newsFeedRepository;
+    private final UserService userService;
+    private final CommentRepository commentRepository;
+    private static final Logger logger = LoggerFactory.getLogger(NewsFeedService.class);
 
-    public NewsFeedService(NewsFeedRepository newsFeedRepository) {
+    public NewsFeedService(NewsFeedRepository newsFeedRepository, UserService userService, CommentRepository commentRepository) {
         this.newsFeedRepository = newsFeedRepository;
+        this.userService = userService;
+        this.commentRepository = commentRepository;
     }
 
-    public NewsFeedResponseDto createNewsFeed(NewsFeedRequestDto newsFeedRequestDto){
-        NewsFeed newsFeed = new NewsFeed(newsFeedRequestDto);
-        newsFeedRepository.save(newsFeed);
-        NewsFeedResponseDto newsFeedResponseDto=new NewsFeedResponseDto(newsFeed);
-        return newsFeedResponseDto;
+    public NewsFeed createNewsFeed(NewsFeedRequestDto newsFeedRequestDto) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long authorId = userService.getUserIdByUsername(userDetails.getUsername());
+
+        NewsFeed newsFeed = new NewsFeed();
+        newsFeed.setAuthorId(authorId);
+        newsFeed.setContent(newsFeedRequestDto.getContent());
+
+        return newsFeedRepository.save(newsFeed);
     }
 
     public NewsFeedResponseDto getNewsFeed(long newsFeedID) {
@@ -34,17 +49,26 @@ public class NewsFeedService {
         return newsFeedRepository.findAllByOrderByCreatedAtDesc().stream().map(NewsFeedResponseDto::new).toList();
     }
 
+    @Transactional
     public NewsFeedResponseDto updateNewsFeed(long newsFeedID, NewsFeedRequestDto newsFeedRequestDto) {
-        NewsFeed newsFeed=newsFeedRepository.findById(newsFeedID).get();
-        newsFeed.setContent(newsFeedRequestDto.getContent());
-        newsFeedRepository.save(newsFeed);
-        return new NewsFeedResponseDto(newsFeed);
+        NewsFeed newsFeed=findNewsFeedById(newsFeedID);
+        if(newsFeed.getAuthorId()!=newsFeedRequestDto.getAuthorId()){
+            newsFeed.setContent(newsFeedRequestDto.getContent());
+            newsFeedRepository.save(newsFeed);
+            return new NewsFeedResponseDto(newsFeed);
+        }
+        else{
+            throw new IllegalArgumentException("없는 게시물입니다.");
+        }
     }
 
-    public long deleteNewsFeed(long newsFeedID) {
-        NewsFeed newsFeed=newsFeedRepository.findById(newsFeedID).get();
+
+    @Transactional
+    public String deleteNewsFeed(long newsFeedID) {
+        commentRepository.deleteAllByNewsfeedId(newsFeedID);
+        NewsFeed newsFeed = newsFeedRepository.findById(newsFeedID).orElseThrow(() -> new IllegalArgumentException("NewsFeed not found with id " + newsFeedID));
         newsFeedRepository.delete(newsFeed);
-        return newsFeedID;
+        return "삭제 완료";
     }
 
     public NewsFeed findNewsFeedById(long newsFeedID) {
