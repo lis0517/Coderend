@@ -10,6 +10,7 @@ import com.sparta.fifteen.error.UserWithdrawnException;
 import com.sparta.fifteen.service.AuthenticationService;
 import com.sparta.fifteen.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,13 +26,14 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
+    @Autowired
     public UserController(UserService userService, AuthenticationService authenticationService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
     }
 
     @PostMapping("/user")
-    private ResponseEntity<?> signup(@RequestBody UserRegisterRequestDto requestDto) {
+    public ResponseEntity<?> signup(@RequestBody UserRegisterRequestDto requestDto) {
         try {
             UserRegisterResponseDto responseDto = userService.registerUser(requestDto);
             return ResponseEntity.ok().body(responseDto);
@@ -43,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/user/login")
-    private ResponseEntity<?> userLogin(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<?> userLogin(@RequestBody UserRequestDto requestDto) {
         try {
             String token = authenticationService.loginUser(requestDto);
             return ResponseEntity.ok().header(JwtConfig.staticHeader, JwtConfig.staticTokenPrefix + token).body(token);
@@ -62,7 +64,7 @@ public class UserController {
 
 
     @PostMapping("/user/logout")
-    private ResponseEntity<?> userLogout(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> userLogout(@RequestHeader("Authorization") String authorizationHeader) {
         try {
             String accessToken = authorizationHeader.replace(JwtConfig.staticTokenPrefix, "");
 

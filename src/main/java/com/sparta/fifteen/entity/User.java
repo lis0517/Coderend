@@ -3,10 +3,7 @@ package com.sparta.fifteen.entity;
 import com.sparta.fifteen.dto.ProfileRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,7 +27,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username; // 로그인 ID
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false, length = 100) // 단방향 인코딩된 패스워드 길이
     private String password; // 로그인 Password
 
