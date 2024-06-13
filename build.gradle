@@ -27,6 +27,8 @@ repositories {
 }
 
 dependencies {
+    //AOP 설정
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
     implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일인증
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
