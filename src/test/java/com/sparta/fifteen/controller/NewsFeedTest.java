@@ -1,4 +1,4 @@
-package com.sparta.fifteen;
+package com.sparta.fifteen.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.fifteen.dto.NewsFeedRequestDto;
