@@ -44,11 +44,13 @@ class AuthenticationServiceTest {
     @DisplayName("정상적인 사용자 로그인")
     void loginUser_Success() {
         // given
-        User user = new User();
-        user.setUsername("testuser1234");
-        user.setName("lee");
-        user.setPassword(passwordEncoder.encode("password1234"));
-        user.setStatusCode(UserStatusEnum.NORMAL.getStatus());
+        User user =  User
+                .builder()
+                .username("testuser1234")
+                .name("lee")
+                .password(passwordEncoder.encode("password1234"))
+                .statusCode(UserStatusEnum.NORMAL.getStatus())
+                .build();
 
         userRepository.save(user);
 
@@ -82,11 +84,13 @@ class AuthenticationServiceTest {
     @DisplayName("탈퇴한 사용자 로그인 시도")
     void loginUser_UserWithdrawn() {
         // given
-        User user = new User();
-        user.setUsername("testuser1234");
-        user.setName("lee");
-        user.setPassword(passwordEncoder.encode("password1234"));
-        user.setStatusCode(UserStatusEnum.WITHDRAWN.getStatus());
+        User user = User
+                .builder()
+                .username("testuser1234")
+                .name("lee")
+                .password(passwordEncoder.encode("password1234"))
+                .statusCode(UserStatusEnum.WITHDRAWN.getStatus())
+                .build();
 
         userRepository.save(user);
 
@@ -103,11 +107,13 @@ class AuthenticationServiceTest {
     @DisplayName("잘못된 비밀번호로 로그인 시도")
     void loginUser_PasswordMismatch() {
         // given
-        User user = new User();
-        user.setUsername("testuser1234");
-        user.setName("lee");
-        user.setPassword(passwordEncoder.encode("password1234"));
-        user.setStatusCode(UserStatusEnum.NORMAL.getStatus());
+        User user = User
+                .builder()
+                .username("testuser1234")
+                .name("lee")
+                .password(passwordEncoder.encode("password1234"))
+                .statusCode(UserStatusEnum.NORMAL.getStatus())
+                .build();
 
         userRepository.save(user);
 

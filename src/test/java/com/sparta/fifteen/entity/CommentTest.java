@@ -16,13 +16,14 @@ class CommentTest {
         requestDto.setAuthorId(1L);
         requestDto.setContent("Test news feed");
 
-        UserRegisterRequestDto userRegisterRequestDto = new UserRegisterRequestDto();
-        userRegisterRequestDto.setUsername("window1234");
-        userRegisterRequestDto.setPassword("password123");
-        userRegisterRequestDto.setName("Test User");
-        userRegisterRequestDto.setOneLine("Hello, I'm a test user.");
-        userRegisterRequestDto.setEmail("test@example.com");
-
+        UserRegisterRequestDto userRegisterRequestDto = UserRegisterRequestDto
+                .builder()
+                .username("window1234")
+                .password("password1234")
+                .name("Test User")
+                .oneLine("hi")
+                .email("test@example.com")
+                .build();
 
         //when
         NewsFeed newsFeed = new NewsFeed(requestDto);

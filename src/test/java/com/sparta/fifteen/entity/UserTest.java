@@ -24,12 +24,14 @@ class UserTest {
     @DisplayName("유효한 아이디 생성 테스트")
     void createUserWithValidUsername(String username) {
         // given
-        UserRegisterRequestDto requestDto = new UserRegisterRequestDto();
-        requestDto.setUsername(username);
-        requestDto.setPassword("password123");
-        requestDto.setName("Test User");
-        requestDto.setOneLine("Hello, I'm a test user.");
-        requestDto.setEmail("test@example.com");
+        UserRegisterRequestDto requestDto = UserRegisterRequestDto
+                .builder()
+                .username(username)
+                .password("password1234")
+                .name("Test User")
+                .oneLine("hi")
+                .email("test@example.com")
+                .build();
 
         // when
         User user = new User(requestDto);
@@ -47,12 +49,14 @@ class UserTest {
     @DisplayName("유효한 비밀번호 테스트")
     void createUserWithValidPassword(String password){
         // given
-        UserRegisterRequestDto requestDto = new UserRegisterRequestDto();
-        requestDto.setUsername("window12345");
-        requestDto.setPassword(password);
-        requestDto.setName("Test User");
-        requestDto.setOneLine("Hello, I'm a test user.");
-        requestDto.setEmail("test@example.com");
+        UserRegisterRequestDto requestDto =  UserRegisterRequestDto
+                .builder()
+                .username("window12345")
+                .password(password)
+                .name("Test User")
+                .oneLine("hi")
+                .email("test@example.com")
+                .build();
 
         // when
         User user = new User(requestDto);

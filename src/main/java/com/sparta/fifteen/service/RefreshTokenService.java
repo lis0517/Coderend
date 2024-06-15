@@ -61,7 +61,7 @@ public class RefreshTokenService {
     public void deleteByUser(User user){
         RefreshToken refreshToken = user.getRefreshToken();
         if (refreshToken != null){
-            user.setRefreshToken(null);
+            user.updateRefreshToken(null);
             refreshTokenRepository.delete(refreshToken);
         }
     }

@@ -27,7 +27,7 @@ class NewsFeedTest {
     void updateLikes(){
         //given
         NewsFeed newsFeed = new NewsFeed();
-        newsFeed.setLikes(0L);
+        newsFeed.initLikes();
 
         //when
         newsFeed.updateLikes(5L);

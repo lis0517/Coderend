@@ -4,18 +4,17 @@ import com.sparta.fifteen.dto.ProfileRequestDto;
 import com.sparta.fifteen.dto.UserRegisterRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 
-@Setter
 @Getter
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,11 +74,32 @@ public class User {
         this.modifiedOn = getModifiedOn();
     }
 
+
+    public void updateEmailVerification(EmailVerification emailVerification){
+        this.emailVerification = emailVerification;
+    }
+
     public void updateProfile(ProfileRequestDto profileRequestDto) {
         this.name = profileRequestDto.getName();
         this.password = profileRequestDto.getNewPassword();
         this.oneLine = profileRequestDto.getOneline();
 
         this.modifiedOn =  new Timestamp(System.currentTimeMillis());
+    }
+
+    public void updateStatusCode(String statusCode){
+        this.statusCode = statusCode;
+    }
+
+    public void updateModifedOn(Timestamp modifiedOn){
+        this.modifiedOn = modifiedOn;
+    }
+
+    public void updateRefreshToken(RefreshToken refreshToken){
+        this.refreshToken = refreshToken;
+    }
+
+    public void updatePassword(String password){
+        this.password = password;
     }
 }

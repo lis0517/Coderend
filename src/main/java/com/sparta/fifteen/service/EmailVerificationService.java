@@ -50,9 +50,9 @@ public class EmailVerificationService {
         }
 
         // 인증 완료 후 이메일 인증 정보만 삭제
-        user.setEmailVerification(null);
+        user.updateEmailVerification(null);
 
-        user.setStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus()));
+        user.updateStatusCode(String.valueOf(UserStatusEnum.NORMAL.getStatus()));
         userRepository.save(user);
     }
 

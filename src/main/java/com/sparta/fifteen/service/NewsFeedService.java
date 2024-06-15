@@ -34,16 +34,18 @@ public class NewsFeedService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         long authorId = userService.getUserIdByUsername(userDetails.getUsername());
 
-        NewsFeed newsFeed = new NewsFeed();
-        newsFeed.setAuthorId(authorId);
-        newsFeed.setContent(newsFeedRequestDto.getContent());
+        NewsFeed newsFeed = NewsFeed
+                .builder()
+                .authorId(authorId)
+                .content(newsFeedRequestDto.getContent())
+                .build();
 
         return newsFeedRepository.save(newsFeed);
     }
 
     public NewsFeedResponseDto getNewsFeed(long newsFeedID) {
         NewsFeed newsFeed=newsFeedRepository.findById(newsFeedID).get();
-        NewsFeedResponseDto newsFeedResponseDto=new NewsFeedResponseDto(newsFeed);
+        NewsFeedResponseDto newsFeedResponseDto = new NewsFeedResponseDto(newsFeed);
         return newsFeedResponseDto;
     }
 
@@ -71,7 +73,7 @@ public class NewsFeedService {
     public NewsFeedResponseDto updateNewsFeed(long newsFeedID, NewsFeedRequestDto newsFeedRequestDto) {
         NewsFeed newsFeed=findNewsFeedById(newsFeedID);
         if(newsFeed.getAuthorId()!=newsFeedRequestDto.getAuthorId()){
-            newsFeed.setContent(newsFeedRequestDto.getContent());
+            newsFeed.updateContent(newsFeedRequestDto.getContent());
             newsFeedRepository.save(newsFeed);
             return new NewsFeedResponseDto(newsFeed);
         }

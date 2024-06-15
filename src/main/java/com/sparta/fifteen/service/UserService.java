@@ -73,8 +73,8 @@ public class UserService {
             throw new UserWithdrawnException("이미 탈퇴한 사용자입니다.");
         }
 
-        user.setStatusCode(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()));
-        user.setModifiedOn(new Timestamp(System.currentTimeMillis()));
+        user.updateStatusCode(String.valueOf(UserStatusEnum.WITHDRAWN.getStatus()));
+        user.updateModifedOn(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user);
 
         refreshTokenService.deleteByUser(user);
@@ -82,10 +82,18 @@ public class UserService {
     }
 
     private User initializeUser(UserRegisterRequestDto requestDto) {
-        User user = new User(requestDto);
-        user.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        user.setStatusCode(String.valueOf(UserStatusEnum.PENDING.getStatus()));
+        User user = User
+                .builder()
+                .username(requestDto.getUsername())
+                .password(passwordEncoder.encode(requestDto.getPassword()))
+                .name(requestDto.getUsername())
+                .email(requestDto.getUsername())
+                .oneLine(requestDto.getUsername())
+                .statusCode(requestDto.getUsername())
+                .statusChangedTime(requestDto.getStatusChangedTime())
+                .createdOn(new Timestamp(System.currentTimeMillis()))
+                .statusCode(String.valueOf(UserStatusEnum.PENDING.getStatus()))
+                .build();
 
         // EmailVerification 엔티티 생성 및 설정
         EmailVerification emailVerification = new EmailVerification();
@@ -93,7 +101,7 @@ public class UserService {
         String verificationCode = emailVerificationService.generateVerificationCode();
         emailVerification.setEmailVerificationCode(verificationCode);
         emailVerification.setEmailVerificationSendTime(new Timestamp(System.currentTimeMillis()));
-        user.setEmailVerification(emailVerification); // User 엔티티와의 관계 설정
+        user.updateEmailVerification(emailVerification); // User 엔티티와의 관계 설정
         return user;
     }
 

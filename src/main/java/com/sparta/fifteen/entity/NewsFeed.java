@@ -3,13 +3,13 @@ package com.sparta.fifteen.entity;
 import com.sparta.fifteen.dto.NewsFeedRequestDto;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name="newsFeed")
+@Builder
+@AllArgsConstructor
 public class NewsFeed extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,12 @@ public class NewsFeed extends Timestamped{
         this.likes=0L;
     }
 
+    public void initLikes(){ likes = 0L; }
     public void updateLikes(long l) {
         this.likes += l;
+    }
+
+    public void updateContent(String content){
+        this.content = content;
     }
 }
