@@ -2,11 +2,14 @@ package com.sparta.fifteen.dto;
 
 import com.sparta.fifteen.entity.RefreshToken;
 import com.sparta.fifteen.entity.User;
-import lombok.Getter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class UserRegisterResponseDto {
     private Long id;
     private String username;

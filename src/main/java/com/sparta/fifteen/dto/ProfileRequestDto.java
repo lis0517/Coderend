@@ -1,16 +1,13 @@
 package com.sparta.fifteen.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
+@Builder
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ProfileRequestDto {
     @Size(min = 10, max = 20)
     @Pattern(regexp = "^[a-zA-Z0-9]*$")

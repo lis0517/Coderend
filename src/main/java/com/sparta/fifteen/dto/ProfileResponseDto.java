@@ -1,9 +1,12 @@
 package com.sparta.fifteen.dto;
 
 import com.sparta.fifteen.entity.User;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ProfileResponseDto {
     private String username;
     private String name;
