@@ -42,8 +42,7 @@ class CommentTest {
     @Test
     void updateComment(){
         // given
-        CommentRequestDto requestDto = new CommentRequestDto();
-        requestDto.setComment("update content");
+        CommentRequestDto requestDto = CommentRequestDto.builder().comment("update content").build();
 
         Comment comment = new Comment( "test comment", null, null );
 

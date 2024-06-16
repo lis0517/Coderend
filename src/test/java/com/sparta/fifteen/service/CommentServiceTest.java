@@ -39,8 +39,7 @@ class CommentServiceTest {
         // given
         User user = User.builder().id(1L).build();
         NewsFeed newsFeed = NewsFeed.builder().id(1L).build();
-        CommentRequestDto requestDto = new CommentRequestDto();
-        requestDto.setComment("Test comment");
+        CommentRequestDto requestDto = CommentRequestDto.builder().comment("update content").build();
 
         // when
         when(commentRepository.save(any(Comment.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -84,8 +83,7 @@ class CommentServiceTest {
         User user = User.builder().id(1L).build();
         NewsFeed newsFeed = NewsFeed.builder().id(1L).build();
         Comment comment = Comment.builder().id(1L).user(user).newsfeed(newsFeed).comment("Old comment").build();
-        CommentRequestDto requestDto = new CommentRequestDto();
-        requestDto.setComment("Updated comment");
+        CommentRequestDto requestDto = CommentRequestDto.builder().comment("update content").build();
 
         // when
         when(commentRepository.findById(comment.getId())).thenReturn(Optional.of(comment));
@@ -104,8 +102,7 @@ class CommentServiceTest {
         User user = User.builder().id(1L).build();
         User anotherUser = User.builder().id(2L).build();
         Comment comment = Comment.builder().id(1L).user(anotherUser).build();
-        CommentRequestDto requestDto = new CommentRequestDto();
-        requestDto.setComment("Updated comment");
+        CommentRequestDto requestDto = CommentRequestDto.builder().comment("update content").build();
 
         // when
         when(commentRepository.findById(comment.getId())).thenReturn(Optional.of(comment));
