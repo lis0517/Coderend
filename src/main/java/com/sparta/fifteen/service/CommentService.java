@@ -24,10 +24,13 @@ public class CommentService {
     }
 
     public CommentResponseDto createComment(User user, NewsFeed newsFeed, CommentRequestDto commentRequestDto) {
-        Comment comment = new Comment(commentRequestDto.getComment(), user, newsFeed);
+        Comment comment = Comment.builder()
+                .comment(commentRequestDto.getComment())
+                .user(user)
+                .newsfeed(newsFeed)
+                .build();
 
         commentRepository.save(comment);
-
         return CommentResponseDto.toDto(comment);
     }
 
