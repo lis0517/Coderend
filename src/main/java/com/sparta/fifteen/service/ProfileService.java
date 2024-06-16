@@ -43,7 +43,7 @@ public class ProfileService {
 
         user.updateProfile(profileRequestDto);
 
-        user.setPassword(passwordEncoder.encode(profileRequestDto.getNewPassword()));
+        user.updatePassword(passwordEncoder.encode(profileRequestDto.getNewPassword()));
 
         userRepository.save(user);
     }
