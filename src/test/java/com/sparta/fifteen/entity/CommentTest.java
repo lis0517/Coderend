@@ -12,9 +12,11 @@ class CommentTest {
     @Test
     void createComment(){
         // given
-        NewsFeedRequestDto requestDto = new NewsFeedRequestDto();
-        requestDto.setAuthorId(1L);
-        requestDto.setContent("Test news feed");
+        NewsFeedRequestDto requestDto = NewsFeedRequestDto
+                .builder()
+                .authorId(1L)
+                .content("Test news feed")
+                .build();
 
         UserRegisterRequestDto userRegisterRequestDto = UserRegisterRequestDto
                 .builder()

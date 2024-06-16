@@ -11,9 +11,11 @@ class NewsFeedTest {
     @Test
     void createNewsfeed(){
         //given
-        NewsFeedRequestDto requestDto = new NewsFeedRequestDto();
-        requestDto.setAuthorId(1L);
-        requestDto.setContent("Test news feed");
+        NewsFeedRequestDto requestDto = NewsFeedRequestDto
+                .builder()
+                .authorId(1L)
+                .content("Test news feed")
+                .build();
 
         //when
         NewsFeed newsFeed = new NewsFeed(requestDto);
